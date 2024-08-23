@@ -1,0 +1,3 @@
+1) Setup the page routing. 
+2) change the home picture. 
+3) * create the objects for the information of webpage 
