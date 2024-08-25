@@ -1,0 +1,176 @@
+{
+  "hero": {
+    "title": "I am Md. Rifat Hossain",
+    "hero-subtitle": "Freelancer , Software Engineer, Entrepreneur"
+  },
+  "about_me": {
+    "name": "Md. Rifat Hossain",
+    "profile": "Full Stack Developer",
+    "contact": {
+      "email": "contact.rifat.hossain",
+      "phone": "+8801310-588752"
+    },
+    "about_me": "Hi, I'm Md. Rifat Hossain, a passionate software engineer, currently working at Siderian Cloud (Nederland). With a focus on designing, developing, and maintaining software, I thrive on solving intricate software problems. My love for embracing new technologies has led me to specialize in Angular and the .NET framework. Currently, I'm diving into the world of DevOps and exploring the realm of microservices for the current project. My ability to quickly learn and adapt to any programming language sets me apart in the dynamic field of software engineering.",
+    "skills": {
+      "frontend": {
+        "framework": {
+          "angular": "90%",
+          "HTML": "100%",
+          "CSS": "100%"
+        },
+        "language": {
+          "JAVASCRIPT": "100%",
+          "TYPESCRIPT": "100%"
+        },
+        "libraries": {
+          "Jquery": "100%",
+          "JqxWidgets": "100%"
+        }
+      },
+      "backend": {
+        "framework": {
+          "DOT_NET_CORE_MVC": "80%",
+          "DOT_NET_CORE_WEB_API": "90%",
+          "FAST_API": "50%"
+        },
+        "language": {
+          "C_SHARP": "70%",
+          "python": "70%"
+        },
+        "database": {
+          "mysql": "80%"
+        }
+      },
+      "devOps": {
+        "docker": "80%",
+        "kubernetes": "80%"
+      },
+      "microservices": {
+        "SignalR": "80%",
+        "rabitMq": "80%",
+        "Apache_Airflow": "20%"
+      }
+    }
+  },
+  "service": {
+    "title": "Services",
+    "subtitle": "Lorem ipsum, dolor sit amet consectetur adipisicing elit.",
+    "servie_type_1": {
+      "icon": "bi bi-card-checklist",
+      "title": "Web Design",
+      "description": "Lorem ipsum dolor sit amet consectetur adipisicing elit. Magni adipisci eaque autem fugiat! Quia, provident vitae! Magnitempora perferendis eum non provident."
+    },
+    "servie_type_2": {
+      "icon": "bi bi-briefcase",
+      "title": "Web Development",
+      "description": "Lorem ipsum dolor sit amet consectetur adipisicing elit. Magni adipisci eaque autem fugiat! Quia, provident vitae! Magnitempora perferendis eum non provident."
+    },
+    "servie_type_3": {
+      "icon": "bi bi-binoculars",
+      "title": "Photography",
+      "description": "Lorem ipsum dolor sit amet consectetur adipisicing elit. Magni adipisci eaque autem fugiat! Quia, provident vitae! Magnitempora perferendis eum non provident."
+    }
+  },
+  "counter": {
+    "work_completed": {
+      "icon": "bi bi-check",
+      "endValue": 450,
+      "text": "WORKS COMPLETED"
+    },
+    "experiance": {
+      "icon": "bi bi-journal-richtext",
+      "endValue": 25,
+      "text": "YEARS OF EXPERIENCE"
+    },
+    "total_client": {
+      "icon": "bi bi-people",
+      "endValue": 550,
+      "text": "TOTAL CLIENTS"
+    },
+    "award": {
+      "icon": "bi bi-award",
+      "endValue": 2,
+      "text": "AWARD WON"
+    }
+  }, 
+  "portfolio": {    
+      "Lorem_impsum_dolor": {
+        "imageSrc": "assets/img/work-1.jpg",
+        "title": "Lorem impsum dolor",
+        "category": "Web Design",
+        "date": "18 Sep. 2018"
+      },
+      "Loreda_Cuno_Nere": {
+        "imageSrc": "assets/img/work-2.jpg",
+        "title": "Loreda Cuno Nere",
+        "category": "Web Design",
+        "date": "18 Sep. 2018"
+      },
+      "Mavrito_Lana_Dere": {
+        "imageSrc": "assets/img/work-3.jpg",
+        "title": "Mavrito Lana Dere",
+        "category": "Web Design",
+        "date": "18 Sep. 2018"
+      },
+      "Bindo_Laro_Cado": {
+        "imageSrc": "assets/img/work-4.jpg",
+        "title": "Bindo Laro Cado",
+        "category": "Web Design",
+        "date": "18 Sep. 2018"
+      },
+      "Studio_Lena_Mado": {
+        "imageSrc": "assets/img/work-5.jpg",
+        "title": "Studio Lena Mado",
+        "category": "Web Design",
+        "date": "18 Sep. 2018"
+      },
+      "Studio_Big_Bang": {
+        "imageSrc": "assets/img/work-6.jpg",
+        "title": "Studio Big Bang",
+        "category": "Web Design",
+        "date": "18 Sep. 2017"
+      }      
+  }, 
+  "testimonial": {
+    "Xavi_Alonso": {
+      "imageSrc": "assets/img/testimonial-2.jpg",
+      "author": "Xavi Alonso",
+      "description": "Curabitur arcu erat, accumsan id imperdiet et, porttitor at sem. Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+    },
+    "Marta_Socrate": {
+      "imageSrc": "assets/img/testimonial-4.jpg",
+      "author": "Marta Socrate",
+      "description": "Curabitur arcu erat, accumsan id imperdiet et, porttitor at sem. Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+    }
+  }, 
+  "blog": {    
+    "See_more_ideas_about_Travel_1": {
+      "imageSrc": "assets/img/post-1.jpg",
+      "category": "Travel",
+      "title": "See more ideas about Travel",
+      "description": "Proin eget tortor risus. Pellentesque in ipsum id orci porta dapibus. Praesent sapien massa, convallis a pellentesque nec, egestas non nisi.",
+      "authorImage": "assets/img/testimonial-2.jpg",
+      "author": "Morgan Freeman",
+      "time": "10 min"
+    },
+    "See_more_ideas_about_Travel_2": {
+      "imageSrc": "assets/img/post-2.jpg",
+      "category": "Web Design",
+      "title": "See more ideas about Travel",
+      "description": "Proin eget tortor risus. Pellentesque in ipsum id orci porta dapibus. Praesent sapien massa, convallis a pellentesque nec, egestas non nisi.",
+      "authorImage": "assets/img/testimonial-2.jpg",
+      "author": "Morgan Freeman",
+      "time": "10 min"
+    },
+    "See_more_ideas_about_Travel_3": {
+      "imageSrc": "assets/img/post-3.jpg",
+      "category": "Web Design",
+      "title": "See more ideas about Travel",
+      "description": "Proin eget tortor risus. Pellentesque in ipsum id orci porta dapibus. Praesent sapien massa, convallis a pellentesque nec, egestas non nisi.",
+      "authorImage": "assets/img/testimonial-2.jpg",
+      "author": "Morgan Freeman",
+      "time": "10 min"
+    }      
+  }  
+
+}

@@ -1,8 +1,8 @@
 import { Routes } from '@angular/router';
-import { HomeComponent } from './Home/home/home.component';
-import { PageNotFoundComponent } from './NotFound/page-not-found/page-not-found.component';
-import { PortfolioDetailsComponent } from './Portfolio-Details/portfolio-details/portfolio-details.component';
-import { SingleBlogComponent } from './Blog/single-blog/single-blog.component';
+import { HomeComponent } from './Home/home.component';
+import { PageNotFoundComponent } from './NotFound/page-not-found.component';
+import { PortfolioDetailsComponent } from './Portfolio-Details/portfolio-details.component';
+import { SingleBlogComponent } from './Blog/single-blog.component';
 
 export const routes: Routes = [
     { path: 'index', component: HomeComponent },

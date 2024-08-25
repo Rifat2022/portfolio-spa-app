@@ -1,3 +1,18 @@
 1) Setup the page routing. 
 2) change the home picture. 
 3) * create the objects for the information of webpage 
+
+
+function () {
+        var _instance = {};
+        var _openCase = function (workflowVersionDefinitionId, caseId, taskId, workflowElementId, dynamicFormContext) {
+            dynamicFormContext.createSiderianFormWindow();
+            dynamicFormContext.ShowSiderianFormWindowByActiveTask(caseId, true);
+        }
+        _instance.OpenCase = function (workflowVersionDefinitionId, caseId, taskId, workflowElementId, dynamicFormContext) {
+            return _openCase(workflowVersionDefinitionId, caseId, taskId, workflowElementId, dynamicFormContext);
+        }; 
+        return _instance;
+    }
+	
+	ShowSiderianFormWindow
