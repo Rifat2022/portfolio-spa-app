@@ -36,27 +36,29 @@
       </nav><!-- .navbar -->
 
     </div>
-  </header><!-- End Header -->
-
-  <div class="hero hero-single route bg-image" style="background-image: url(assets/img/overlay-bg.jpg)">
-    <div class="overlay-mf"></div>
-    <div class="hero-content display-table">
-      <div class="table-cell">
-        <div class="container">
-          <h2 class="hero-title mb-4">Blog Details</h2>
-          <ol class="breadcrumb d-flex justify-content-center">
-            <li class="breadcrumb-item">
-              <a href="#">Home</a>
-            </li>
-            <li class="breadcrumb-item">
-              <a href="#">Library</a>
-            </li>
-            <li class="breadcrumb-item active">Data</li>
-          </ol>
-        </div>
+</header>
+<!-- End Header -->
+<!-- Hero starts  -->
+<div class="hero hero-single route bg-image" style="background-image: url(assets/img/overlay-bg.jpg)">
+  <div class="overlay-mf"></div>
+  <div class="hero-content display-table">
+    <div class="table-cell">
+      <div class="container">
+        <h2 class="hero-title mb-4">Blog Details</h2>
+        <ol class="breadcrumb d-flex justify-content-center">
+          <li class="breadcrumb-item">
+            <a href="#">Home</a>
+          </li>
+          <li class="breadcrumb-item">
+            <a href="#">Library</a>
+          </li>
+          <li class="breadcrumb-item active">Data</li>
+        </ol>
       </div>
     </div>
   </div>
+</div>
+<!-- Hero ends  -->
 
   <main id="main">
 
@@ -65,7 +67,8 @@
       <div class="container">
         <div class="row">
           <div class="col-md-8">
-            <div class="post-box">
+            <app-blog-post *ngFor="let post of posts" [post]="post"></app-blog-post>
+            <!-- <div class="post-box">
               <div class="post-thumb">
                 <img src="assets/img/post-1.jpg" class="img-fluid" alt="">
               </div>
@@ -125,12 +128,26 @@
                   consectetur adipiscing elit. Donec sollicitudin molestie malesuada.
                 </p>
               </div>
-            </div>
+            </div> -->
+            <!-- Comment Section  -->
             <div class="box-comments">
               <div class="title-box-2">
-                <h4 class="title-comments title-left">Comments (34)</h4>
+                <h4 class="title-comments title-left">Comments ({{ comments.length }})</h4>
               </div>
               <ul class="list-comments">
+                <li *ngFor="let comment of comments">
+                  <div class="comment-avatar">
+                    <img [src]="comment.avatar" alt="">
+                  </div>
+                  <div class="comment-details">
+                    <h4 class="comment-author">{{ comment.author }}</h4>
+                    <span>{{ comment.date }}</span>
+                    <p>{{ comment.text }}</p>
+                    <a href="#">Reply</a>
+                  </div>
+                </li>
+              </ul>
+              <!-- <ul class="list-comments">
                 <li>
                   <div class="comment-avatar">
                     <img src="assets/img/testimonial-2.jpg" alt="">
@@ -192,7 +209,7 @@
                     <a href="3">Reply</a>
                   </div>
                 </li>
-              </ul>
+              </ul> -->
             </div>
             <div class="form-comments">
               <div class="title-box-2">
@@ -230,90 +247,7 @@
             </div>
           </div>
           <div class="col-md-4">
-            <div class="widget-sidebar sidebar-search">
-              <h5 class="sidebar-title">Search</h5>
-              <div class="sidebar-content">
-                <form>
-                  <div class="input-group">
-                    <input type="text" class="form-control" placeholder="Search for..." aria-label="Search for...">
-                    <span class="input-group-btn">
-                      <button class="btn btn-secondary btn-search" type="button">
-                        <span class="bi bi-search"></span>
-                      </button>
-                    </span>
-                  </div>
-                </form>
-              </div>
-            </div>
-            <div class="widget-sidebar">
-              <h5 class="sidebar-title">Recent Post</h5>
-              <div class="sidebar-content">
-                <ul class="list-sidebar">
-                  <li>
-                    <a href="#">Atque placeat maiores.</a>
-                  </li>
-                  <li>
-                    <a href="#">Lorem ipsum dolor sit amet consectetur</a>
-                  </li>
-                  <li>
-                    <a href="#">Nam quo autem exercitationem.</a>
-                  </li>
-                  <li>
-                    <a href="#">Atque placeat maiores nam quo autem</a>
-                  </li>
-                  <li>
-                    <a href="#">Nam quo autem exercitationem.</a>
-                  </li>
-                </ul>
-              </div>
-            </div>
-            <div class="widget-sidebar">
-              <h5 class="sidebar-title">Archives</h5>
-              <div class="sidebar-content">
-                <ul class="list-sidebar">
-                  <li>
-                    <a href="#">September, 2017.</a>
-                  </li>
-                  <li>
-                    <a href="#">April, 2017.</a>
-                  </li>
-                  <li>
-                    <a href="#">Nam quo autem exercitationem.</a>
-                  </li>
-                  <li>
-                    <a href="#">Atque placeat maiores nam quo autem</a>
-                  </li>
-                  <li>
-                    <a href="#">Nam quo autem exercitationem.</a>
-                  </li>
-                </ul>
-              </div>
-            </div>
-            <div class="widget-sidebar widget-tags">
-              <h5 class="sidebar-title">Tags</h5>
-              <div class="sidebar-content">
-                <ul>
-                  <li>
-                    <a href="#">Web.</a>
-                  </li>
-                  <li>
-                    <a href="#">Design.</a>
-                  </li>
-                  <li>
-                    <a href="#">Travel.</a>
-                  </li>
-                  <li>
-                    <a href="#">Photoshop</a>
-                  </li>
-                  <li>
-                    <a href="#">Corel Draw</a>
-                  </li>
-                  <li>
-                    <a href="#">JavaScript</a>
-                  </li>
-                </ul>
-              </div>
-            </div>
+            <app-sidebar></app-sidebar>
           </div>
         </div>
       </div>
@@ -345,3 +279,4 @@
 
   <div id="preloader"></div>
   <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+

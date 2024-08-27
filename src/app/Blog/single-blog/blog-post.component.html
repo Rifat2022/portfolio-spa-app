@@ -1,0 +1,29 @@
+<div class="post-box">
+    <div class="post-thumb">
+      <img [src]="post.imageUrl" class="img-fluid" alt="">
+    </div>
+    <div class="post-meta">
+      <h1 class="article-title">{{ post.title }}</h1>
+      <ul>
+        <li>
+          <span class="bi bi-person"></span>
+          <a href="#">{{ post.author }}</a>
+        </li>
+        <li>
+          <span class="bi bi-tag"></span>
+          <a href="#">{{ post.category }}</a>
+        </li>
+        <li>
+          <span class="bi bi-chat-left-text"></span>
+          <a href="#">{{ post.comments.length }}</a>
+        </li>
+      </ul>
+    </div>
+    <div class="article-content">
+      <p *ngFor="let paragraph of post.content">{{ paragraph }}</p>
+      <blockquote class="blockquote">
+        <p class="mb-0">{{ post.quote }}</p>
+      </blockquote>
+    </div>
+  </div>
+  
