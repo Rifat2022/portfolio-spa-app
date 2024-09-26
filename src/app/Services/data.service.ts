@@ -169,14 +169,14 @@ export class DataService {
   ];
   
   public getData(){
-   var data: any = {
-    blog_posts: this.blog_posts, 
-    testimonial: this.testimonial, 
-    portfolio: this.blog_posts, 
-    service: this.blog_posts, 
-    navlink: this.blog_posts, 
-    counter: this.blog_posts,    
+   var Data: any = {
+    blogPosts: this.blog_posts, 
+    testimonials: this.testimonial, 
+    workItems: this.portfolio, 
+    services: this.service, 
+    navLinks: this.navlink, 
+    counters: this.counter,    
    }; 
-   return data; 
+   return Data; 
   }
 }

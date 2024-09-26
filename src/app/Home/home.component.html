@@ -7,7 +7,7 @@
 
     <nav id="navbar" class="navbar">
       <ul>
-        <li *ngFor="let link of navLinks" [class.dropdown]="link.isDropdown">
+        <li *ngFor="let link of this.navLinks" [class.dropdown]="link.isDropdown">
           <a class="nav-link scrollto" [class.active]="link.isActive" [href]="link.href">
             <span>{{ link.label }}</span>
             <i *ngIf="link.isDropdown" [class]="link.icon"></i>
@@ -163,7 +163,7 @@
         </div>
       </div>
       <div class="row">
-        <div class="col-md-4" *ngFor="let service of services">
+        <div class="col-md-4" *ngFor="let service of this.services">
           <div class="service-box">
             <div class="service-ico">
               <span class="ico-circle"><i [class]="service.icon"></i></span>
@@ -187,7 +187,7 @@
     <div class="container position-relative">
       <div class="row">
         <div class="row">
-          <div class="col-sm-3 col-lg-3" *ngFor="let counter of counters">
+          <div class="col-sm-3 col-lg-3" *ngFor="let counter of this.counters">
             <div class="counter-box counter-box pt-4 pt-md-0">
               <div class="counter-ico">
                 <span class="ico-circle"><i [class]="counter.icon"></i></span>
@@ -221,7 +221,7 @@
         </div>
       </div>
       <div class="row">
-        <div class="col-md-4" *ngFor="let work of workItems">
+        <div class="col-md-4" *ngFor="let work of this.workItems">
           <div class="work-box">
             <a [href]="work.imageSrc" data-gallery="portfolioGallery" class="portfolio-lightbox">
               <div class="work-img">
@@ -260,9 +260,30 @@
     <div class="container">
       <div class="row">
         <div class="col-md-12">
-          <div class="testimonials-slider swiper" data-aos="fade-up" data-aos-delay="100">
+          <swiper-container  
+          slides-per-view="1" 
+          speed="500" 
+          loop="true" 
+          css-mode="true" 
+          navigation="true"
+          >
+              <swiper-slide *ngFor="let testimonial of this.testimonials">
+                <div class="testimonial-box">
+                  <div class="author-test">
+                    <img [src]="testimonial?.imageSrc" alt="" class="rounded-circle b-shadow-a" />
+                    <span class="author">{{ testimonial.author }}</span>
+                  </div>
+                  <div class="content-test">
+                    <p class="description lead">
+                      {{ testimonial?.description }}
+                    </p>
+                  </div>
+                </div>
+              </swiper-slide>
+            </swiper-container>
+          <!-- <div class="testimonials-slider swiper" data-aos="fade-up" data-aos-delay="100">
             <div class="swiper-wrapper">
-              <div class="swiper-slide" *ngFor="let testimonial of testimonials">
+              <div class="swiper-slide" *ngFor="let testimonial of this.testimonials">
                 <div class="testimonial-box">
                   <div class="author-test">
                     <img [src]="testimonial.imageSrc" alt="" class="rounded-circle b-shadow-a" />
@@ -275,13 +296,10 @@
                   </div>
                 </div>
               </div>
-            </div>
+            </div>            
             <div class="swiper-pagination"></div>
-          </div>
-
-          <!-- <div id="testimonial-mf" class="owl-carousel owl-theme">
-          
-        </div> -->
+          </div> -->
+          <!-- <div id="testimonial-mf" class="owl-carousel owl-theme"></div> -->
         </div>
       </div>
     </div>
@@ -302,39 +320,39 @@
           </div>
         </div>
       </div>
-<div class="row">
-  <div class="col-md-4" *ngFor="let post of blogPosts">
-    <div class="card card-blog">
-      <div class="card-img">
-        <a href="blog-single.html"><img [src]="post.imageSrc" alt="" class="img-fluid" /></a>
-      </div>
-      <div class="card-body">
-        <div class="card-category-box">
-          <div class="card-category">
-            <h6 class="category">{{ post.category }}</h6>
+      <div class="row">
+        <div class="col-md-4" *ngFor="let post of this.blogPosts">
+          <div class="card card-blog">
+            <div class="card-img">
+              <a href="blog-single.html"><img [src]="post.imageSrc" alt="" class="img-fluid" /></a>
+            </div>
+            <div class="card-body">
+              <div class="card-category-box">
+                <div class="card-categngory">
+                  <h6 class="category">{{ post.category }}</h6>
+                </div>
+              </div>
+              <h3 class="card-title">
+                <a href="blog-single.html">{{ post.title }}</a>
+              </h3>
+              <p class="card-description">
+                {{ post.description }}
+              </p>
+            </div>
+            <div class="card-footer">
+              <div class="post-author">
+                <a href="#">
+                  <img [src]="post.authorImage" alt="" class="avatar rounded-circle" />
+                  <span class="author">{{ post.author }}</span>
+                </a>
+              </div>
+              <div class="post-date">
+                <span class="bi bi-clock"></span> {{ post.time }}
+              </div>
+            </div>
           </div>
         </div>
-        <h3 class="card-title">
-          <a href="blog-single.html">{{ post.title }}</a>
-        </h3>
-        <p class="card-description">
-          {{ post.description }}
-        </p>
       </div>
-      <div class="card-footer">
-        <div class="post-author">
-          <a href="#">
-            <img [src]="post.authorImage" alt="" class="avatar rounded-circle" />
-            <span class="author">{{ post.author }}</span>
-          </a>
-        </div>
-        <div class="post-date">
-          <span class="bi bi-clock"></span> {{ post.time }}
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
 
     </div>
   </section>
