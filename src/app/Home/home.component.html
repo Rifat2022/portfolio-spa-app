@@ -260,14 +260,16 @@
     <div class="container">
       <div class="row">
         <div class="col-md-12">
-          <swiper-container  
+          <swiper-container
+          #testimonialSwiperContainer
           slides-per-view="1" 
-          speed="500" 
+          speed="300" 
           loop="true" 
           css-mode="true" 
           navigation="true"
+          mousewheel-force-to-axis="true"     
           >
-              <swiper-slide *ngFor="let testimonial of this.testimonials">
+            <swiper-slide *ngFor="let testimonial of this.testimonials">
                 <div class="testimonial-box">
                   <div class="author-test">
                     <img [src]="testimonial?.imageSrc" alt="" class="rounded-circle b-shadow-a" />
@@ -281,6 +283,8 @@
                 </div>
               </swiper-slide>
             </swiper-container>
+            <!-- <div class="swiper-pagination"></div> -->
+
           <!-- <div class="testimonials-slider swiper" data-aos="fade-up" data-aos-delay="100">
             <div class="swiper-wrapper">
               <div class="swiper-slide" *ngFor="let testimonial of this.testimonials">
@@ -392,6 +396,6 @@
 </footer>
 <!-- End  Footer -->
 
-<div id="preloader"></div>
+<!-- <div id="preloader"></div> -->
 <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i
     class="bi bi-arrow-up-short"></i></a>

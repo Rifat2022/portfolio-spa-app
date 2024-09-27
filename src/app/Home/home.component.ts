@@ -1,5 +1,18 @@
-import { CommonModule } from "@angular/common";
-import { Component, Input, OnInit, CUSTOM_ELEMENTS_SCHEMA, ContentChild, ElementRef, effect, AfterViewInit, ViewChild, } from "@angular/core";
+import { CommonModule, isPlatformBrowser } from "@angular/common";
+import { 
+  Component, 
+  Input, 
+  OnInit, 
+  CUSTOM_ELEMENTS_SCHEMA, 
+  ContentChild, 
+  ElementRef, 
+  effect, 
+  AfterViewInit, 
+  ViewChild, 
+  ViewContainerRef,
+   PLATFORM_ID,
+   Inject, 
+} from "@angular/core";
 import { ContactComponent } from "../Contact/contact.component";
 import { NavLink } from "../Models/navLinks.model";
 import { Services } from "../Models/services.model";
@@ -18,6 +31,7 @@ import { SwiperContainer } from 'swiper/element/bundle';
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss',
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
+  host: {ngSkipHydration: 'true'},
 })
 export class HomeComponent implements OnInit, AfterViewInit {
   navLinks!: NavLink[] 
@@ -26,20 +40,38 @@ export class HomeComponent implements OnInit, AfterViewInit {
   workItems !: Portfolio[] 
   testimonials!: Testimonial[] 
   blogPosts!: BlogPost[] 
+  @ViewChild("testimonialSwiperContainer", {static: false}) testimonialSwiperContainerRef!: ElementRef;
 
-  constructor(private dataService: DataService) {}
-  ngAfterViewInit(): void {
-  }
+  constructor(private dataService: DataService, @Inject(PLATFORM_ID) private platformId: any) {}
 
   ngOnInit(): void {
-    const Data: any = JSON.parse(JSON.stringify(this.dataService.getData())); 
+    this.setDataToComponent(JSON.parse(JSON.stringify(this.dataService.getData())));          
+  }
+
+  ngAfterViewInit(): void {
+    if (isPlatformBrowser(this.platformId)) {
+      this.setHomeComponentEvents();
+    }
+  }
+  private setDataToComponent(Data: any){
     this.navLinks= Data.navLinks ; 
     this.services= Data.services ; 
     this.counters= Data.counters ; 
     this.workItems= Data.workItems ; 
     this.testimonials= Data.testimonials ; 
-    this.blogPosts= Data.blogPosts ;     
+    this.blogPosts= Data.blogPosts ;
   }
-  
+  private triggerslideNext(container: any){
+    if(container){
+      setInterval(()=> {
+        container.swiper.slideNext(); 
+      },5000); 
+    }else{
+      throw new Error("swiper-container error!"); 
+    }
+  }
+  private setHomeComponentEvents() {
+    this.triggerslideNext(this.testimonialSwiperContainerRef.nativeElement);    
+  }  
   
 }
