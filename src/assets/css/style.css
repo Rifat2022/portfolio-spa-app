@@ -1,11 +1,11 @@
-
 /*--------------------------------------------------------------
 # General
 --------------------------------------------------------------*/
 
-:root{
-  --white-smoke: #f5f5f5; 
+:root {
+  --white-smoke: #f5f5f5;
 }
+
 body {
   /* background-color: ; */
   color: #4e4e4e;
@@ -1478,4 +1478,51 @@ footer .credits {
 
 footer .credits a {
   color: #fff;
+}
+
+
+
+/* Backdrop for the drawer modal for popup from right  */
+.drawer-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1040;
+  /* Behind drawer */
+}
+
+/* Drawer Container */
+.drawer {
+  position: fixed;
+  /* Top offset */
+  right: 30%;
+  /* Initially hidden to the right */
+  width: 30%;
+  /* Drawer width */
+  height: calc(100vh - 300px);
+  /* From top to bottom */
+  background: #fff;
+  box-shadow: -2px 0 10px rgba(0, 0, 0, 0.2);
+  /* Small shadow effect */
+  z-index: 1050;
+  /* Above backdrop */
+  overflow-y: auto;
+  transition: transform 0.3s ease-in-out;
+  /* Smooth opening animation */
+  transform: translateX(100%);
+  /* Start hidden */
+}
+
+/* Open state */
+.drawer.open {
+  transform: translateX(0);
+  /* Slide in */
+}
+
+/* Drawer Content Styling */
+.drawer-content {
+  padding: 20px;
 }

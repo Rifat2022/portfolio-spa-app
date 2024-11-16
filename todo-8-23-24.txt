@@ -8,6 +8,8 @@ function () {
         var _openCase = function (workflowVersionDefinitionId, caseId, taskId, workflowElementId, dynamicFormContext) {
             dynamicFormContext.createSiderianFormWindow();
             dynamicFormContext.ShowSiderianFormWindowByActiveTask(caseId, true);
+			//or
+			dynamicFormContext.ShowSiderianFormWindow(workflowVersionDefinitionId, caseId, taskId, workflowElementId, dynamicFormContext)
         }
         _instance.OpenCase = function (workflowVersionDefinitionId, caseId, taskId, workflowElementId, dynamicFormContext) {
             return _openCase(workflowVersionDefinitionId, caseId, taskId, workflowElementId, dynamicFormContext);
