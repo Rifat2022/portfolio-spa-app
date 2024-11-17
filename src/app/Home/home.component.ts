@@ -22,11 +22,12 @@ import { BlogPost } from "../Models/blog-post.model";
 import { DataService } from "../Services/data.service";
 import Typed from 'typed.js';
 import GLightbox from 'glightbox';
+import { ROUTER_CONFIGURATION, Router, RouterLink, RouterModule, RouterOutlet } from "@angular/router";
 declare var _: any; 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, ContactComponent],
+  imports: [CommonModule, ContactComponent, RouterModule, RouterOutlet, RouterLink],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss',
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
@@ -40,19 +41,24 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   testimonials!: Testimonial[]
   blogPosts!: BlogPost[]
   isDrawerOpen: boolean = false;
+
   @ViewChild("testimonialSwiperContainer", { static: false }) testimonialSwiperContainerRef!: ElementRef;
   @ViewChild("header", { static: false }) headerElemRef!: ElementRef;
   @ViewChild("backToTop", { static: false }) backToTopRef!: ElementRef;
   @ViewChild("offcanvas", { static: false }) offcanvas!: ElementRef;
-  // private offCanvasObj!: any; 
+
   offcanvasLabel: string = '';
   private typed: Typed | null = null;
+
   constructor(
     private dataService: DataService,
     @Inject(PLATFORM_ID) private platformId: any,
     private renderer2: Renderer2,
-    private elRef: ElementRef
-  ) { }
+    private elRef: ElementRef,
+    private router: Router
+  ) { 
+
+  }
 
 
   ngOnInit(): void {
@@ -80,18 +86,9 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   handleEscape(event: KeyboardEvent): void {
     this.closeDrawer();
   }
-  ModifyDataUsingOpenSideModal(event: any) {
-    // let modificationSectionName = "";
-    this.offcanvasLabel = "testimonial data"
-    const button = event.target as HTMLElement;
-    // Find the parent `.testimonial-box` container
-    const parentContainer = button.closest('.testimonial-box');
-    if (parentContainer) {
-      let id:any = parentContainer.id; // Extract the id
-      let idx = id.split("-")[2]
-      let testimonial = this.testimonials[idx];
-    }
-    this.openOffcanvas();
+  navigateToModifyComponent(event: any) {
+    const editSection:string = event.currentTarget.parentElement.attributes.id.value;
+    this.router.navigate(['modify', editSection]);
   }
 
   openOffcanvas(): void {
@@ -113,7 +110,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     me.setScrollToHashElement();
     me.scrollToHeaderElementFromTopButton();
     me.startIntroTypedEffect();
-    me.initializeGlightBox();
+    // me.initializeGlightBox();
   }
   private initializeGlightBox() {
     const GLightbox = require('glightbox'); // Loads GLightbox only in the browser

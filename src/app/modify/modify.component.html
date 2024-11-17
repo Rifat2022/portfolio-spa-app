@@ -1,66 +1,107 @@
 <div class="container my-5">
-    <h2 class="text-center mb-4">Dynamic Testimonial Table</h2>
-  
-    <!-- Table -->
-    <table class="table table-bordered table-striped">
-      <thead class="table-dark">
-        <tr>
-          <th *ngFor="let header of headers">{{ header }}</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let testimonial of testimonials; let i = index">
-          <td *ngFor="let key of headers">{{ testimonial[key] }}</td>
-          <td>
-            <button class="btn btn-sm btn-primary me-2" (click)="editTestimonial(i)">
-              <i class="bi bi-pencil-fill"></i> Edit
-            </button>
-            <button class="btn btn-sm btn-danger" (click)="deleteTestimonial(i)">
-              <i class="bi bi-trash-fill"></i> Delete
-            </button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-  
-    <!-- Form -->
-    <form (ngSubmit)="editingIndex !== null ? updateTestimonial() : addTestimonial()">
-      <div class="mb-3">
-        <label for="imageSrcInput" class="form-label">Image Source</label>
-        <input
-          type="text"
-          class="form-control"
-          id="imageSrcInput"
-          [(ngModel)]="newTestimonial.imageSrc"
-          name="imageSrc"
-          placeholder="Enter image source"
-        />
-      </div>
-      <div class="mb-3">
-        <label for="authorInput" class="form-label">Author</label>
-        <input
-          type="text"
-          class="form-control"
-          id="authorInput"
-          [(ngModel)]="newTestimonial.author"
-          name="author"
-          placeholder="Enter author name"
-        />
-      </div>
-      <div class="mb-3">
-        <label for="descriptionInput" class="form-label">Description</label>
-        <textarea
-          class="form-control"
-          id="descriptionInput"
-          [(ngModel)]="newTestimonial.description"
-          name="description"
-          placeholder="Enter description"
-          rows="3"
-        ></textarea>
-      </div>
-      <button type="submit" class="btn btn-success" *ngIf="editingIndex === null">Add</button>
-      <button type="submit" class="btn btn-warning" *ngIf="editingIndex !== null">Update</button>
-    </form>
-  </div>
-  
+  <h2 class="text-center mb-4">Dynamic Testimonial Table</h2>
+
+  <!-- Table -->
+  <table class="table table-bordered table-striped">
+    <thead class="table-dark">
+      <tr>
+        <th *ngFor="let header of headers">
+          {{ header }}
+        </th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let testimonial of testimonials; let i = index">
+        <td *ngFor="let key of headers">{{ testimonial[key] }}</td>
+        <td>
+          <button class="btn btn-sm btn-primary me-2" (click)="editTestimonial(i)">
+            <i class="bi bi-pencil-fill"></i> Edit
+          </button>
+          <button class="btn btn-sm btn-danger" (click)="deleteTestimonial(i)">
+            <i class="bi bi-trash-fill"></i> Delete
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <form (ngSubmit)="editingIndex !== null ? updateTestimonial() : addCustomerReview()">
+    <div class="mb-3">
+      <label for="imageSrcInput" class="form-label">Email</label>
+      <input type="text" class="form-control" id="emailSrcInput" [(ngModel)]="newCustomerReview.email" name="emailSrc"
+        placeholder="Enter email source" />
+    </div>
+    <div class="mb-3">
+      <label for="nameInput" class="form-label">Name</label>
+      <input type="text" class="form-control" id="nameInput" [(ngModel)]="newCustomerReview.name" name="name"
+        placeholder="Enter name" />
+    </div>
+    <div class="mb-3">
+      <label for="descriptionInput" class="form-label">Review Description</label>
+      <textarea class="form-control" id="descriptionInput" [(ngModel)]="newCustomerReview.reviewDescription"
+        name="description" placeholder="Give a little description" rows="3"></textarea>
+    </div>
+    <div class="mb-3">
+      <label for="photoInput" class="form-label">Photo</label>
+      <input type="file" class="form-control" id="photoInput" accept="image/*" (change)="onFileSelected($event)" />
+    </div>
+    <div class="mb-3">
+      <label for="quotationInput" class="form-label">Quotation</label>
+      <textarea class="form-control" id="quotationInput" [(ngModel)]="newCustomerReview.quotation" name="quotation"
+        placeholder="eg. I will work with him again." rows="3"></textarea>
+    </div>
+    <div class="mb-3">
+      <label for="designationInput" class="form-label">Designation</label>
+      <textarea class="form-control" id="designationInput" [(ngModel)]="newCustomerReview.designation"
+        name="designation" placeholder="eg. CEO" rows="3"></textarea>
+    </div>
+    <div class="mb-3">
+      <label for="addressInput" class="form-label">Address</label>
+      <textarea class="form-control" id="designationInput" [(ngModel)]="newCustomerReview.address" name="designation"
+        placeholder="eg. CEO" rows="3"></textarea>
+    </div>
+
+    <button type="submit" class="btn btn-success" *ngIf="editingIndex === null">Add</button>
+    <button type="submit" class="btn btn-warning" *ngIf="editingIndex !== null">Update</button>
+  </form>
+
+  <!-- Form -->
+  <!-- <form (ngSubmit)="editingIndex !== null ? updateTestimonial() : addTestimonial()">
+          <div class="mb-3">
+            <label for="imageSrcInput" class="form-label">Image Source</label>
+            <input
+              type="text"
+              class="form-control"
+              id="imageSrcInput"
+              [(ngModel)]="newTestimonial.imageSrc"
+              name="imageSrc"
+              placeholder="Enter image source"
+            />
+          </div>
+          <div class="mb-3">
+            <label for="authorInput" class="form-label">Author</label>
+            <input
+              type="text"
+              class="form-control"
+              id="authorInput"
+              [(ngModel)]="newTestimonial.author"
+              name="author"
+              placeholder="Enter author name"
+            />
+          </div>
+          <div class="mb-3">
+            <label for="descriptionInput" class="form-label">Description</label>
+            <textarea
+              class="form-control"
+              id="descriptionInput"
+              [(ngModel)]="newTestimonial.description"
+              name="description"
+              placeholder="Enter description"
+              rows="3"
+            ></textarea>
+          </div>
+          <button type="submit" class="btn btn-success" *ngIf="editingIndex === null">Add</button>
+          <button type="submit" class="btn btn-warning" *ngIf="editingIndex !== null">Update</button>
+        </form>  -->
+</div>

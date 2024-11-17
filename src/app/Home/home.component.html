@@ -281,7 +281,7 @@
               navigation="true" mousewheel-force-to-axis="true">
               <swiper-slide *ngFor="let testimonial of this.testimonials; let i = index">
                 <!-- [id]="'testimonial-id-' + i" -->
-                <div [id]="'testimonial-id-' + i"  class="testimonial-box">
+                <div [id]="'testimonial-id-' + i" class="testimonial-box">
                   <div class="author-test">
                     <img [src]="testimonial?.imageSrc" alt="" class="rounded-circle b-shadow-a" />
                     <span class="author">{{ testimonial.author }}</span>
@@ -291,17 +291,18 @@
                       {{ testimonial?.description }}
                     </p>
                   </div>
-                  <!-- Modify Button -->
-                  <div class="position-absolute bottom-0 end-0 m-2">
-                    <button class="btn btn-primary" (click)="ModifyDataUsingOpenSideModal($event)">Modify</button>
-                  </div>
+
                 </div>
               </swiper-slide>
             </swiper-container>
           </div>
         </div>
       </div>
-
+      <!-- Modify Button start-->
+      <div id="clientsReview" class="position-absolute bottom-0 end-0 m-2">
+        <button class="btn btn-primary" (click)="navigateToModifyComponent($event)">Modify</button>
+      </div>
+      <!-- Modify Button ends-->
     </div>
 
     <!-- End Testimonials Section -->

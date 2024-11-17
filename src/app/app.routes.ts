@@ -7,11 +7,18 @@ import { TestComponent } from './test/test.component';
 import { ModifyComponent } from './modify/modify.component';
 
 export const routes: Routes = [
-    { path: 'index', component: HomeComponent },
+    { path: 'home', component: HomeComponent },
+    {
+        path: 'modify/:clientsReview', // Corrected path
+        loadComponent: () =>
+            import('./modify/modify.component').then(m =>
+                m.ModifyComponent
+            )
+    },
     { path: 'portfolio-details', component: PortfolioDetailsComponent },
     { path: 'blog', component: BlogComponent },
-    { path: 'modify', component: ModifyComponent },
     { path: 'test', component: TestComponent },
-    { path: '', redirectTo: '/index', pathMatch: 'full' }, // Default route
+    { path: '', redirectTo: '/home', pathMatch: 'full' }, // Default route
     { path: '**', component: PageNotFoundComponent }  // Wildcard route for a 404 page
 ];
+

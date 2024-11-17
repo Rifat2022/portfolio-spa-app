@@ -9,7 +9,7 @@ import { Observable } from 'rxjs/internal/Observable';
 })
 
 export class CustomerReviewService {
-  private apiUrl = 'http://localhost:7000/api/CustomerReview';
+  private apiUrl = 'https://localhost:7039/api/CustomerReview';
   constructor(private http: HttpClient) { }
   customerReview!: CustomerReview[];
   // Get all reviews
