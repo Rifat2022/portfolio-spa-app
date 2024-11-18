@@ -5,27 +5,28 @@
   <table class="table table-bordered table-striped">
     <thead class="table-dark">
       <tr>
-        <th *ngFor="let header of headers">
-          {{ header }}
+        <th *ngFor="let header of customerReviewHeaders">
+          {{ header || 'N/A' }}
         </th>
         <th>Actions</th>
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let testimonial of testimonials; let i = index">
-        <td *ngFor="let key of headers">{{ testimonial[key] }}</td>
+      <tr *ngFor="let customerReview of CustomerReviewData; let i = index">
+        <td *ngFor="let key of headers">{{ customerReview[key] }}</td>
         <td>
           <button class="btn btn-sm btn-primary me-2" (click)="editTestimonial(i)">
-            <i class="bi bi-pencil-fill"></i> Edit
+            <i class="bi bi-pencil-fill"></i> 
           </button>
           <button class="btn btn-sm btn-danger" (click)="deleteTestimonial(i)">
-            <i class="bi bi-trash-fill"></i> Delete
+            <i class="bi bi-trash-fill"></i> 
           </button>
         </td>
       </tr>
     </tbody>
   </table>
 
+  <h2 class="text-center mb-4">Add {{selectedSection.customerReview}} Data</h2>
   <form (ngSubmit)="editingIndex !== null ? updateTestimonial() : addCustomerReview()">
     <div class="mb-3">
       <label for="imageSrcInput" class="form-label">Email</label>

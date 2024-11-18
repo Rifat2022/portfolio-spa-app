@@ -23,11 +23,13 @@ import { DataService } from "../Services/data.service";
 import Typed from 'typed.js';
 import GLightbox from 'glightbox';
 import { ROUTER_CONFIGURATION, Router, RouterLink, RouterModule, RouterOutlet } from "@angular/router";
-declare var _: any; 
+import { HttpClientModule } from "@angular/common/http";
+declare var _: any;
 @Component({
   selector: 'app-home',
   standalone: true,
   imports: [CommonModule, ContactComponent, RouterModule, RouterOutlet, RouterLink],
+  providers: [],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss',
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
@@ -56,7 +58,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     private renderer2: Renderer2,
     private elRef: ElementRef,
     private router: Router
-  ) { 
+  ) {
 
   }
 
@@ -87,7 +89,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     this.closeDrawer();
   }
   navigateToModifyComponent(event: any) {
-    const editSection:string = event.currentTarget.parentElement.attributes.id.value;
+    const editSection: string = event.currentTarget.parentElement.attributes.id.value;
     this.router.navigate(['modify', editSection]);
   }
 
