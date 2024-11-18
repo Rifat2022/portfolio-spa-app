@@ -1,40 +1,24 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-// import { Testimonial } from '../Models/testimonial.model';
 import { CustomerReviewService } from '../Services/customer-review.service';
 import { CustomerReview } from '../Models/customer-review.model';
 import { FormsModule } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router, Event, NavigationStart, NavigationEnd } from '@angular/router';
 import { FileService } from '../Services/file.service';
-interface Testimonial {
-  imageSrc: string;
-  author: string;
-  description: string;
-}
+import { filter } from 'rxjs';
+import { provideAnimations } from '@angular/platform-browser/animations';
+import { provideToastr } from 'ngx-toastr';
+
+
 @Component({
   selector: 'app-modify',
   standalone: true,
   imports: [CommonModule, FormsModule],
-  providers: [CustomerReviewService],
+  providers: [CustomerReviewService, ],
   templateUrl: './modify.component.html',
   styleUrl: './modify.component.scss'
 })
 export class ModifyComponent {
-  testimonials = [
-    {
-      imageSrc: 'assets/img/testimonial-2.jpg',
-      author: 'Xavi Alonso',
-      description: 'Curabitur arcu erat, accumsan id imperdiet et, porttitor at sem. Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-    },
-    {
-      imageSrc: 'assets/img/testimonial-4.jpg',
-      author: 'Marta Socrate',
-      description: 'Curabitur arcu erat, accumsan id imperdiet et, porttitor at sem. Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-    },
-  ];
-
-  headers = Object.keys(this.testimonials[0]) as (keyof Testimonial)[];
-  newTestimonial = { imageSrc: '', author: '', description: '' };
 
   CustomerReviewData!: any[];
   customerReviewHeaders!: any[];
@@ -44,8 +28,7 @@ export class ModifyComponent {
     customerReview: 'clientsReview'
   }
   selectedFile!: File | null;
-  newCustomerReview = {
-    id: 0, // Default or placeholder for primary key
+  newCustomerReview : CustomerReview = {
     email: '', // Empty string as it's required
     reviewDescription: '', // Empty string as it's required
     reviewTime: new Date(), // Current date as a placeholder
@@ -57,25 +40,38 @@ export class ModifyComponent {
   };
 
   /**Constructor*/
-  constructor(private route: ActivatedRoute, private customerReviewService: CustomerReviewService, private fileService: FileService) {
-    this.route.paramMap.subscribe((params) => {
-      let componentName = params.get('clientsReview') || ''; // Retrieve the 'name' parameter
-      this.getComponentData(componentName);
+  constructor(
+    private router: Router,
+    private route: ActivatedRoute,
+    private customerReviewService: CustomerReviewService,
+    private fileService: FileService) {
+    this.router.events.pipe(
+      filter((event): event is NavigationEnd => event instanceof NavigationEnd)
+    ).subscribe(() => {
+      this.route.paramMap.subscribe((params) => {
+        const componentName = params.get('clientsReview') || ''; // Retrieve the 'name' parameter
+        this.getComponentData(componentName);
+      });
     });
+
   }
 
   getComponentData(name: string) {
+    this.CustomerReviewData = []; 
     switch (name) {
       case this.selectedSection.customerReview:
         this.customerReviewService.getReviews().subscribe((CustomerReviewData: CustomerReview[]) => {
-          this.customerReviewHeaders = Object.keys(this.CustomerReviewData[0]) as (keyof CustomerReview)[];
+          this.customerReviewHeaders = Object.keys(CustomerReviewData[0]) as (keyof CustomerReview)[];
           this.CustomerReviewData = CustomerReviewData;
-        }, (error)=> {
+        }, (error) => {
           console.log("Failed to fetch error && ", error)
+          // setTimeout(() => {
+          //   this.router.navigate(['home'])
+          // }, 1000);
         })
         break;
       default:
-        break; 
+        break;
     }
   }
   // Add a new testimonial
@@ -86,17 +82,37 @@ export class ModifyComponent {
       if (this.selectedFile) {
         this.fileService.fileToBase64String(this.selectedFile).then((base64String: string) => {
           this.newCustomerReview.photo = base64String;
+          this.customerReviewService.createReview(this.newCustomerReview).
+          subscribe((data: any) => {
+            console.log("Data save successfull!")
+          }, 
+          (error: any) => {
+            console.log("Failed! " + error);
+          });
         })
-          .catch(error => {
-            throw new Error(error);
-          })
+        .catch(error => {
+          console.log(error)
+        })
       }
       this.CustomerReviewData.push({ ...this.newCustomerReview });
-      this.resetForm();
+      this.resetNewCustomerReviewObject();
     }
   }
 
-
+  // SaveData() {
+  //   let idx = 0;
+  //   this.CustomerReviewData.forEach(review => {
+  //     this.customerReviewService.createReview(review).subscribe((data: any) => {
+  //       idx++;
+  //       if (idx === this.CustomerReviewData.length) {
+  //         console.log("update success")
+  //       }
+  //     }, (error: any) => {
+  //       console.log("Failed & " + error);
+  //     });
+  //   })
+  //   //implement saving all at a time. 
+  // }
 
 
   editCustomerReview(index: number) {
@@ -108,7 +124,7 @@ export class ModifyComponent {
   updateCustomerReview() {
     if (this.editingIndex !== null) {
       this.CustomerReviewData[this.editingIndex] = { ...this.newCustomerReview };
-      this.resetForm();
+      this.resetNewCustomerReviewObject();
     }
   }
 
@@ -116,17 +132,10 @@ export class ModifyComponent {
 
   deleteCustomerReview(index: number) {
     this.CustomerReviewData.splice(index, 1);
-    this.resetForm();
+    this.resetNewCustomerReviewObject();
   }
-
-
-  resetForm() {
-    this.newTestimonial = { imageSrc: '', author: '', description: '' };
-    this.editingIndex = null;
-  }
-  resetCustomerReviewForm() {
+  resetNewCustomerReviewObject() {
     this.newCustomerReview = {
-      id: 0,
       email: '',
       reviewDescription: '',
       reviewTime: new Date(),
@@ -138,33 +147,42 @@ export class ModifyComponent {
     };
     this.editingIndex = null;
   }
-  onFileSelected(event: Event) {
-    this.selectedFile = this.fileService.onOneFileSelected(event); 
+
+
+
+
+
+  onFileSelected(event: any) {
+    this.selectedFile = this.fileService.onOneFileSelected(event);
   }
 
-  addTestimonial() {
-    if (this.newTestimonial.imageSrc && this.newTestimonial.author && this.newTestimonial.description) {
-      this.testimonials.push({ ...this.newTestimonial });
-      this.resetForm();
-    } else {
-      alert('All fields are required.');
-    }
-  }
-  deleteTestimonial(index: number) {
-    this.testimonials.splice(index, 1);
-    this.resetForm();
-  }
-  // Edit an existing testimonial
-  editTestimonial(index: number) {
-    this.editingIndex = index;
-    this.newTestimonial = { ...this.testimonials[index] };
-  }
-  // Update the edited testimonial
-  updateTestimonial() {
-    if (this.editingIndex !== null) {
-      this.testimonials[this.editingIndex] = { ...this.newTestimonial };
-      this.resetForm();
-    }
-  }
+  // addTestimonial() {
+  //   if (this.newTestimonial.imageSrc && this.newTestimonial.author && this.newTestimonial.description) {
+  //     this.testimonials.push({ ...this.newTestimonial });
+  //     this.resetForm();
+  //   } else {
+  //     alert('All fields are required.');
+  //   }
+  // }
+  // deleteTestimonial(index: number) {
+  //   this.testimonials.splice(index, 1);
+  //   this.resetForm();
+  // }
+  // // Edit an existing testimonial
+  // editTestimonial(index: number) {
+  //   this.editingIndex = index;
+  //   this.newTestimonial = { ...this.testimonials[index] };
+  // }
+  // // Update the edited testimonial
+  // updateTestimonial() {
+  //   if (this.editingIndex !== null) {
+  //     this.testimonials[this.editingIndex] = { ...this.newTestimonial };
+  //     this.resetForm();
+  //   }
+  // }
+  // resetForm() {
+  //   this.newTestimonial = { imageSrc: '', author: '', description: '' };
+  //   this.editingIndex = null;
+  // }
 
 }
