@@ -1,81 +1,98 @@
 <div class="container my-5">
   <h2 class="text-center mb-4">Dynamic Testimonial Table</h2>
-  <div class="row">
-    <!-- Table Starts-->
-    <table class="table table-bordered table-striped">
-      <thead class="table-dark">
-        <tr>
-          <th *ngFor="let header of customerReviewHeaders">
-            {{ header || 'N/A' }}
-          </th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let customerReview of CustomerReviewData; let i = index">
-          <td *ngFor="let key of customerReviewHeaders">{{ customerReview[key] }}</td>
-          <td>
-            <button class="btn btn-sm btn-primary me-2" (click)="editCustomerReview(i)">
-              <i class="bi bi-pencil-fill"></i>
-            </button>
-            <button class="btn btn-sm btn-danger" (click)="deleteCustomerReview(i)">
-              <i class="bi bi-trash-fill"></i>
-            </button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-    <!-- Table end-->
-    <!-- <div class="d-flex justify-content-end">
-      <button type="submit" class="btn btn-primary w-20" style="width: 20%;" role="button"
-        (click)="SaveData()">Save</button>
-    </div> -->
+  <hr>
+  <div class="row bg-white shadow p-3 m-3 rounded " *ngIf="reviews.length > 0 && customerReviewHeaders.length > 0">
+    <div class="col-12">
+      <!-- Table Starts-->
+      <table class="table table-bordered table-striped">
+        <thead class="table-dark">
+          <tr>
+            <th *ngFor="let header of customerReviewHeaders">
+              {{ header || 'N/A' }}
+            </th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let review of reviews; let i = index">
 
+            <!-- <td *ngFor="let key of customerReviewHeaders"> {{ review[key] }}</td> -->
+            <td *ngFor="let key of customerReviewHeaders">
+              <ng-container *ngIf="key === 'fileDetails'; else textDisplay">
+                <img class="w-50 h-50 rounded" [src]="rootDirectory + subDirectory + review[key]" [alt]="review?.name" />
+              </ng-container>
+              <ng-template #textDisplay>
+                {{ review[key] }}
+              </ng-template>
+            </td>
+
+            <td>
+              <button class="btn btn-sm btn-primary me-2" (click)="editCustomerReview(i)">
+                <i class="bi bi-pencil-fill"></i>
+              </button>
+              <button class="btn btn-sm btn-danger" (click)="deleteCustomerReview(i)">
+                <i class="bi bi-trash-fill"></i>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </div>
 
 
 
   <h2 class="text-center mb-4">Add {{selectedSection.customerReview}} Data</h2>
-  <form (ngSubmit)="editingIndex !== null ? updateCustomerReview() : addCustomerReview()">
-    <div class="mb-3">
-      <label for="imageSrcInput" class="form-label fw-bold">Email</label>
-      <input type="text" class="form-control" id="emailSrcInput" [(ngModel)]="newCustomerReview.email" name="emailSrc"
-        placeholder="Enter email source" />
-    </div>
-    <div class="mb-3">
-      <label for="nameInput" class="form-label fw-bold">Name</label>
-      <input type="text" class="form-control" id="nameInput" [(ngModel)]="newCustomerReview.name" name="name"
-        placeholder="Enter name" />
-    </div>
-    <div class="mb-3">
-      <label for="descriptionInput" class="form-label fw-bold">Review Description</label>
-      <textarea class="form-control" id="descriptionInput" [(ngModel)]="newCustomerReview.reviewDescription"
-        name="description" placeholder="Give a little description" rows="3"></textarea>
-    </div>
-    <div class="mb-3">
-      <label for="photoInput" class="form-label fw-bold">Photo</label>
-      <input type="file" class="form-control" id="photoInput" accept="image/*" (change)="onFileSelected($event)" />
-    </div>
-    <div class="mb-3">
-      <label for="quotationInput" class="form-label fw-bold">Quotation</label>
-      <textarea class="form-control" id="quotationInput" [(ngModel)]="newCustomerReview.quotation" name="quotation"
-        placeholder="eg. I will work with him again." rows="3"></textarea>
-    </div>
-    <div class="mb-3">
-      <label for="designationInput" class="form-label fw-bold">Designation</label>
-      <textarea class="form-control" id="designationInput" [(ngModel)]="newCustomerReview.designation"
-        name="designation" placeholder="eg. CEO" rows="3"></textarea>
-    </div>
-    <div class="mb-3">
-      <label for="addressInput" class="form-label fw-bold">Address</label>
-      <textarea class="form-control" id="designationInput" [(ngModel)]="newCustomerReview.address" name="designation"
-        placeholder="eg. CEO" rows="3"></textarea>
-    </div>
-    <div class="d-flex justify-content-end">
-      <button type="submit" class="btn btn-success" *ngIf="editingIndex === null"><i class="bi bi-cloud-check-fill me-2"></i>Add</button>
-      <button type="submit" class="btn btn-warning" *ngIf="editingIndex !== null"><i class="bi bi-cloud-upload-fill me-2"></i>Update</button>
-    </div>
-
-  </form>
-        
+  <hr class="" style="height: 2px; ">
+  <div class="bg-white shadow-sm p-3 mb-5 rounded">
+    <form (ngSubmit)="editingIndex !== null ? updateCustomerReview() : createCustomerReview()">
+      <div class="row p-3 m-3">
+        <div class="col-6">
+          <div class="mb-3">
+            <label for="imageSrcInput" class="form-label fw-bold">Email</label>
+            <input type="text" class="form-control" id="emailSrcInput" [(ngModel)]="newCustomerReview.email"
+              name="emailSrc" placeholder="Enter email source" />
+          </div>
+          <div class="mb-3">
+            <label for="nameInput" class="form-label fw-bold">Name</label>
+            <input type="text" class="form-control" id="nameInput" [(ngModel)]="newCustomerReview.name" name="name"
+              placeholder="Enter name" />
+          </div>
+          <div class="mb-3">
+            <label for="descriptionInput" class="form-label fw-bold">Review Description</label>
+            <textarea class="form-control" id="descriptionInput" [(ngModel)]="newCustomerReview.reviewDescription"
+              name="description" placeholder="Give a little description" rows="3"></textarea>
+          </div>
+          <div class="mb-3">
+            <label for="photoInput" class="form-label fw-bold">Photo</label>
+            <input type="file" class="form-control" id="photoInput" accept="image/*"
+              (change)="onFileSelected($event)" />
+          </div>
+        </div>
+        <div class="col-6">
+          <div class="mb-3">
+            <label for="quotationInput" class="form-label fw-bold">Quotation</label>
+            <textarea class="form-control" id="quotationInput" [(ngModel)]="newCustomerReview.quotation"
+              name="quotation" placeholder="eg. I will work with him again." rows="3"></textarea>
+          </div>
+          <div class="mb-3">
+            <label for="designationInput" class="form-label fw-bold">Designation</label>
+            <textarea class="form-control" id="designationInput" [(ngModel)]="newCustomerReview.designation"
+              name="designation" placeholder="eg. CEO" rows="3"></textarea>
+          </div>
+          <div class="mb-3">
+            <label for="addressInput" class="form-label fw-bold">Address</label>
+            <textarea class="form-control" id="designationInput" [(ngModel)]="newCustomerReview.address"
+              name="designation" placeholder="eg. CEO" rows="3"></textarea>
+          </div>
+        </div>
+        <div class="d-flex justify-content-end">
+          <button type="submit" class="btn btn-success" *ngIf="editingIndex === null"><i
+              class="bi bi-plus-circle me-2"></i>Add</button>
+          <button type="submit" class="btn btn-warning" *ngIf="editingIndex !== null"><i
+              class="bi bi-cloud-upload-fill me-2"></i>Update</button>
+        </div>
+      </div>
+    </form>
+  </div>
 </div>
