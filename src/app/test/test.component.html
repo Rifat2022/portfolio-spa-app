@@ -1,4 +1,4 @@
-<div class="row" style="margin-bottom:15px;">
+<!-- <div class="row" style="margin-bottom:15px;">
     <div class="col-md-3">
       <input type="file" #file placeholder="Choose file" (change)="uploadFile(file.files)" style="display:none;">
       <button type="button" class="btn btn-success" (click)="file.click()">Upload File</button>
@@ -11,4 +11,16 @@
         {{message}}
       </span>
     </div>
+  </div> -->
+  <div class="m-3">
+    <div class="mb-3">
+      <label for="photoInput" class="form-label fw-bold">Photo</label>
+      <input type="file" class="form-control" id="photoInput" accept="image/*" (change)="onFileSelected($event)" />
+    </div>
+    <div *ngIf="filePreview">
+      <h5>Preview:</h5>
+      <img [src]="filePreview" alt="Uploaded Image" class="rounded-circle" />
+    </div>
   </div>
+
+  

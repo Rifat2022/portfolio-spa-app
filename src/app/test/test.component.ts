@@ -17,6 +17,28 @@ export class TestComponent {
   constructor(private http: HttpClient) { }
   ngOnInit() {
   }
+  filePreview: string | ArrayBuffer | null = null; // For preview
+  binaryData: string = ''; // For storing binary/Base64 string
+
+  // Handle file selection
+  onFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+
+    if (input.files && input.files.length > 0) {
+      const file = input.files[0];
+      const reader = new FileReader();
+
+      // Read file as a binary string (Base64)
+      reader.onload = () => {
+        this.filePreview = reader.result; // Preview for image
+        this.binaryData = reader.result as string; // Binary data as Base64
+        console.log('Binary Data:', this.binaryData);
+      };
+
+      // Start reading the file as Base64
+      reader.readAsDataURL(file);
+    }
+  }
   uploadFile (files:any)  {
     if (files.length === 0) {
       return;

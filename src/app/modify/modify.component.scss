@@ -1,8 +1,30 @@
 .table {
-    margin-bottom: 2rem;
-  }
+  margin-bottom: 2rem;
+}
+
+textarea {
+  resize: none;
+}
+.circular_image {
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  overflow: hidden;
+  background-color: blue;
+  /* commented for demo
+  float: left;
+  margin-left: 125px;
+  margin-top: 20px;
+  */
   
-  textarea {
-    resize: none;
-  }
-  
+  /*for demo*/
+  display:inline-block;
+  vertical-align:middle;
+}
+.circled_img{
+  overflow: hidden;
+  border-top-left-radius: 20% 20%; 
+  border-top-right-radius: 20% 20%; 
+  border-bottom-right-radius: 20% 20%; 
+  border-bottom-left-radius: 20% 20%;
+}

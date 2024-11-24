@@ -1,0 +1,33 @@
+<div for="testimonials" class="testimonials paralax-mf bg-image position-relative"
+  style="background-image: url(assets/img/overlay-bg.jpg);">
+  <div class="overlay-mf"></div>
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <!-- <swiper-container #testimonialSwiperContainer slides-per-view="1" speed="300" loop="true" css-mode="true" -->
+          <!-- navigation="true" mousewheel-force-to-axis="true"> -->
+          <div *ngFor="let review of reviews; let i = index">
+            <div [id]="'testimonial-id-' + i" class="testimonial-box">
+              <div class="author-test">
+                <img [src]="review.fileDetails.data" alt="" class="rounded-circle b-shadow-a" />
+                <span class="author">{{ review.name }}</span>
+              </div>
+              <div class="content-test">
+                <p class="description lead">
+                  {{ review.reviewDescription }}
+                </p>
+              </div>
+            </div>
+          </div>
+        <!-- </swiper-container> -->
+      </div>
+    </div>
+  </div>
+  <!-- Modify Button start-->
+  <div id="clientsReview" class="position-absolute bottom-0 end-0 m-2">
+    <!-- <button class="btn btn-primary" (click)="navigateToModifyComponent($event)">Modify</button> -->
+    <button class="btn btn-primary" >Modify</button>
+  </div>
+  <!-- Modify Button ends-->
+</div>
+

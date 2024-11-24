@@ -1,7 +1,7 @@
 /*--------------------------------------------------------------
 # General
 --------------------------------------------------------------*/
-@import 'ngx-toastr/toastr-bs5-alert';
+
 :root {
   --white-smoke: #f5f5f5;
 }
@@ -1066,7 +1066,7 @@ a:hover {
 /*--------------------------------------------------------------
 # Testimonials
 --------------------------------------------------------------*/
-.testimonial-box {
+/* .testimonial-box {
   color: #fff;
   text-align: center;
 }
@@ -1132,7 +1132,7 @@ a:hover {
 
 .swiper-pagination .swiper-pagination-bullet-active {
   background-color: #fff;
-}
+} */
 
 /*--------------------------------------------------------------
 # Contact

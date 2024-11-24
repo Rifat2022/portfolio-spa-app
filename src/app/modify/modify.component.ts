@@ -1,49 +1,59 @@
+import { CustomerReview, FileDetails } from '../components/customer-review/customer-review.model';
+import { CustomerReviewService } from '../Services/customer-review.service';
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { CustomerReviewService } from '../Services/customer-review.service';
-import { CustomerReview } from '../Models/customer-review.model';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FileService } from '../Services/file.service';
-import { error } from 'console';
-import { FileDetails } from '../Models/FileDetails';
 
 
 @Component({
   selector: 'app-modify',
   standalone: true,
   imports: [CommonModule, FormsModule],
-  providers: [CustomerReviewService,],
+  providers: [CustomerReviewService],
   templateUrl: './modify.component.html',
   styleUrl: './modify.component.scss'
 })
 
 export class ModifyComponent {
-
-  rootDirectory : string = "D:/Personal/Task/Project/Portfolio_web_api_app/Portfolio_backend/Porfolio/wwwroot/"; 
-  subDirectory: string = "assets/images/";
-  newCustomerReview: CustomerReview = {
-    email: '',
-    reviewDescription: '',
-    reviewTime: new Date(), 
-    name: '',
-    fileDetails: '',
-    quotation: '',
-    designation: '',
-    address: '',
+  customerReviewHeaders!: (keyof CustomerReview)[]; 
+  // excludedKeys: (keyof CustomerReview)[] = ['fileDetailsId', 'fileDetails'];
+  customerReviews: CustomerReview[] = []
+  files: FileDetails[]= []
+  selectedSection = 'clientsReview'; 
+  editingIndex: number | null = null
+  selectedFile!: File; 
+  previewKey : string = "fileDetails"
+  // rootDirectory: string = "D:/Personal/Task/Project/Portfolio_web_api_app/Portfolio_backend/Porfolio/wwwroot/";
+  // subDirectory: string = "assets/images/";
+  newCustomerReview: any = {
+    Id: undefined,
+    Email: '',
+    ReviewDescription: '',
+    ReviewTime: '',
+    Name: '',
+    FileDetailsId: undefined,
+    // FileDetails: {
+    //   FileDetailsId: undefined,
+    //   FileName: '',
+    //   ContentType: '',
+    //   Path: '',
+    //   Data: '',
+    // },
+    Quotation: '',
+    Designation: '',
+    Address: '',
   };
+  
 
-  reviews: CustomerReview[] = [];
-  selectedSection = { customerReview: 'clientsReview' };
-  customerReviewHeaders!: (keyof CustomerReview)[];
-  editingIndex: number | null = null;
-  selectedFile!: File | null;
+
   /**Constructor*/
   constructor(
-    private router: Router,
     private route: ActivatedRoute,
     private customerReviewService: CustomerReviewService,
     private fileService: FileService) {
+      
     // this.router.events.pipe(
     //   filter((event): event is NavigationEnd => event instanceof NavigationEnd)
     // ).subscribe(() => {
@@ -53,95 +63,134 @@ export class ModifyComponent {
       this.getComponentData(componentName);
     });
   }
+  onFileSelected(event: any) {
+    // var me = this; 
+    const fileInput = event.target as HTMLInputElement;    
+    if (!(fileInput.files) || fileInput.files.length == 0) {
+      return; 
+    }
+    //multiple files stored in files array
+    // if (fileInput?.files) {
+    //   this.selectedFiles = Array.from(fileInput.files);
+    // }
+    this.selectedFile = fileInput.files[0];
+    // this.fileService.fileToBase64String(this.selectedFile).then(base64FileString => {
+    //   this.newCustomerReview.FileDetails.FileName = this.selectedFile.name; 
+    //   this.newCustomerReview.FileDetails.ContentType = this.selectedFile.type; 
+    //   this.newCustomerReview.FileDetails.Data= Array.from(this.fileService.base64ToByteArray(base64FileString));
+    // });
+  }
+
+  CreateCustomerReview() {
+    if (!this.selectedFile) {
+      return;
+    }
+    this.newCustomerReview.reviewTime = new Date().toLocaleString();
+    const customerReviewFormData = new FormData();
+    // Append selected multiple files to the FormData
+    // this.selectedFiles.forEach((file, index) => {
+    //   customerReviewFormData.append(`files`, file, file.name);
+    // });
+    customerReviewFormData.append(`file`, this.selectedFile, this.selectedFile.name);
+    customerReviewFormData.append('CustomerReview', JSON.stringify(this.newCustomerReview));
+
+    this.customerReviewService.createCustomerReviewWithFile(customerReviewFormData)
+      .subscribe({
+        next: (customerReview : any) => {
+          const blobUrl = this.fileService.createBlobUrlFromByteArr(customerReview?.fileDetails.data, customerReview.fileDetails.contentType);
+          customerReview.fileDetails.path = blobUrl ?  blobUrl : '';
+          this.customerReviews.push(customerReview);
+        },
+        error: (err: any) => {
+          console.log(err.message);
+        }
+      })
+   
+  }
 
   getComponentData(name: string) {
-    this.reviews = [];
-    // let newReviews: CustomerReview[]; 
-    if (name === this.selectedSection.customerReview) {
-      this.customerReviewService.getReviews().subscribe({
-        next: (reviews: CustomerReview[]) => {
-          if (reviews.length > 0) {
-            reviews.map( review => {
-              // let fileDetails = JSON.parse(review.fileDetails); 
-              // const path = this.rootDirectory + this.subDirectory + fileDetails.path; 
-              // review.fileDetails = path;
-              let modifiedReview = this.modifyFilepath(review); 
-              if(modifiedReview )this.reviews.push(modifiedReview)
-                else throw new Error(); 
-            })            
-            this.customerReviewHeaders = Object.keys(reviews[0]) as (keyof CustomerReview)[];
-            // this.reviews = [...reviews];
-          }
-        }, error: ((error: any) => {
+    if (name == this.selectedSection) {
+      this.customerReviewService.getAllReviews().subscribe({
+        next: (reviews: CustomerReview []) => {
+          this.customerReviewHeaders = Object.keys(reviews[0]) as (keyof CustomerReview)[];
+          reviews.map((cr: CustomerReview) => {
+            const blobUrl = this.fileService.createBlobUrlFromByteArr(cr.fileDetails.data, cr.fileDetails.contentType);
+            cr.fileDetails.path = blobUrl ? blobUrl : '';
+            this.customerReviews.push(cr)
+          })
+        },
+        error: ((error: any) => {
           console.log("Request failed!" + error);
-        }), complete: () => {}
+        }), 
+        complete: () => { 
+
+        }
       })
     }
   }
-  createCustomerReview() {
-    if (!this.selectedFile) {
-      alert('Please select a file!');
-      return;
-    }
-    let fileDetails = {
-      FileName: this.selectedFile.name,
-      ContentType: this.selectedFile.type,
-      Path: ""
-    }
-    this.newCustomerReview.fileDetails = JSON.stringify(fileDetails);
-    this.customerReviewService.createReview(this.newCustomerReview, this.selectedFile).subscribe({
-      next: (response: CustomerReview) => {
-        let modifiedResponse = this.modifyFilepath(response); 
-        if(modifiedResponse) 
-          this.reviews.push(modifiedResponse)
-        else 
-          throw new Error();
-        this.resetForm();
-        alert('Customer review added successfully!');
-      },
-      error: (error: any) => {
-        console.error('Error adding review:', error);
-        alert('Failed to add review.');
-      },
-    });
-  }
-  modifyFilepath(review: CustomerReview){
-    try{
-      let fileDetails : FileDetails = JSON.parse(review.fileDetails)
-      review.fileDetails = fileDetails.Path;
-      return review; 
-    }
-    catch(ex){
-      return review; 
-    }
-  }
-  // After clicking the edit button in the table 
-  editCustomerReview(index: number) {
-    this.editingIndex = index;
-    this.newCustomerReview = { ...this.reviews[index] };
-  }
 
 
-  updateCustomerReview() {
+  // submitCustomerReview(): void {
+  //   const formData = new FormData();
+
+  //   // Append file if selected
+  //   if (this.selectedFile) {
+  //     formData.append('file', this.selectedFile, this.selectedFile.name);
+  //   }
+
+  //   // Append CustomerReview properties as form data
+  //   Object.entries(this.newCustomerReview).forEach(([key, value]) => {
+  //     if (value !== undefined && value !== null) {
+  //       formData.append(key, value instanceof Object ? JSON.stringify(value) : value.toString());
+  //     }
+  //   });
+
+  //   // Use the service to send the data
+  //   this.customerReviewService.createCustomerReviewWithFile(formData).subscribe(
+  //     (response) => {
+  //       console.log('Review created successfully:', response);
+  //     },
+  //     (error) => {
+  //       console.error('Error creating review:', error);
+  //     }
+  //   );
+  // }
+
+
+  UpdateCustomerReview() {
     if (this.editingIndex === null || !this.selectedFile) {
       alert('Cannot update review. Please select a review and file.');
       return;
     }
     const idx = this.editingIndex;
-    this.customerReviewService
-      .updateReview(idx, this.newCustomerReview).subscribe((review: CustomerReview) => {
-        // console.log("Data save successfull!")
-        this.reviews[idx] = review;
-        this.resetForm();
-      },
-        (error: any) => {
-          console.log("Failed! " + error);
-        });
-
+    // this.reviewService
+    //   .updateReview(idx, this.newCustomerReview).subscribe((review: CustomerReview) => {
+    //     // console.log("Data save successfull!")
+    //     this.customerReviews[idx] = review;
+    //     this.resetForm();
+    //   },
+    //     (error: any) => {
+    //       console.log("Failed! " + error);
+    //     });
   }
 
 
+  // modifyFilepath(review: CustomerReview){
+  //   try{
+  //     let fileDetails : FileDetails = JSON.parse(review.fileDetails)
+  //     review.fileDetails = fileDetails.Path;
+  //     return review; 
+  //   }
+  //   catch(ex){
+  //     return review; 
+  //   }
+  // }
 
+
+  editCustomerReview(index: number) {
+    this.editingIndex = index;
+    this.newCustomerReview = { ...this.customerReviews[index] };
+  }
 
   // SaveData() {
   //   let idx = 0;
@@ -158,31 +207,32 @@ export class ModifyComponent {
   //   //implement saving all at a time. 
   // }
 
-
-
-
-
-
   deleteCustomerReview(index: number) {
-    this.reviews.splice(index, 1);
+    this.customerReviews.splice(index, 1);
     this.resetForm();
   }
+
   resetForm() {
     this.newCustomerReview = {
+      id: undefined,
       email: '',
       reviewDescription: '',
-      reviewTime: new Date(),
+      reviewTime: '',
       name: '',
-      fileDetails: '',
+      fileDetailsId: undefined,
+      fileDetails: {
+        FileDetailsId: undefined,
+        FileName: '',
+        ContentType: '',
+        Path: '',
+        Data: '',
+
+      },
       quotation: '',
       designation: '',
       address: '',
     };
     this.editingIndex = null;
-  }
-
-  onFileSelected(event: any) {
-    this.selectedFile = this.fileService.onOneFileSelected(event);
   }
 
   // addTestimonial() {
