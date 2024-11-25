@@ -17,12 +17,12 @@ export class CustomerReviewService {
   }
 
   // Create a new review
-  createReview(formData: FormData): Observable<CustomerReview> {
-    let customerReviewJson = JSON.stringify(formData);
-    return this.http.post<CustomerReview>(this.apiUrl, customerReviewJson, {
-      headers: { 'Content-Type': 'application/json' }
-    });
-  }
+  // createReview(formData: FormData): Observable<CustomerReview> {
+  //   let customerReviewJson = JSON.stringify(formData);
+  //   return this.http.post<CustomerReview>(this.apiUrl, customerReviewJson, {
+  //     headers: { 'Content-Type': 'application/json' }
+  //   });
+  // }
   // createReview(review: CustomerReview, file: File): Observable<CustomerReview> {
   //   const formData = new FormData();
   //   formData.append('file', file);
@@ -35,9 +35,9 @@ export class CustomerReviewService {
 
 
   // Update an existing review
-  updateReview(id: number, review: CustomerReview): Observable<CustomerReview> {
+  updateCustomerReviewWithFile(id: number, updatedFormData: FormData): Observable<CustomerReview> {
     const url = `${this.apiUrl}/${id}`;
-    return this.http.put<CustomerReview>(url, review);
+    return this.http.put<CustomerReview>(url, updatedFormData);
   }
 
   // Delete a review

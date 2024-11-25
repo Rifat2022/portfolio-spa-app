@@ -1,11 +1,10 @@
 <div class="container-fluid my-5">
   <h3 class="mb-4">Dynamic Testimonial Table</h3>
-  <hr>
-  <div class="row bg-white shadow-sm m-3 rounded "
-    *ngIf="customerReviews.length > 0 && customerReviewHeaders.length > 0">
-    <div class="col-12 ">
+  <!-- <hr> -->
+  <div class="row bg-white shadow-sm rounded m-3" *ngIf="(customerReviews.length > 0) && (customerReviewHeaders.length > 0)">
+    <div class=" col-12 ">
       <!-- Table Starts-->
-      <table class="table table-bordered table-striped">
+      <table class="table table-bordered table-striped rounded">
         <thead class="">
           <tr class="text-capitalize fw-normal">
             <th *ngFor="let header of customerReviewHeaders">
@@ -44,24 +43,24 @@
 
 
   <h3 class=" mb-4">Add {{selectedSection}} Data</h3>
-  <hr class="" style="height: 2px; ">
+  <!-- <hr class="" style="height: 2px; "> -->
   <div class="bg-white shadow-sm p-3 mb-5 rounded">
     <form (ngSubmit)="editingIndex !== null ? UpdateCustomerReview() : CreateCustomerReview()">
       <div class="row p-3 m-3">
         <div class="col-6">
           <div class="mb-3">
             <label for="imageSrcInput" class="form-label fw-bold">Email</label>
-            <input type="text" class="form-control" id="emailSrcInput" [(ngModel)]="newCustomerReview.Email"
+            <input type="text" class="form-control" id="emailSrcInput" [(ngModel)]="newCustomerReview.email"
               name="emailSrc" placeholder="Enter email source" />
           </div>
           <div class="mb-3">
             <label for="nameInput" class="form-label fw-bold">Name</label>
-            <input type="text" class="form-control" id="nameInput" [(ngModel)]="newCustomerReview.Name" name="name"
+            <input type="text" class="form-control" id="nameInput" [(ngModel)]="newCustomerReview.name" name="name"
               placeholder="Enter name" />
           </div>
           <div class="mb-3">
             <label for="descriptionInput" class="form-label fw-bold">Review Description</label>
-            <textarea class="form-control" id="descriptionInput" [(ngModel)]="newCustomerReview.ReviewDescription"
+            <textarea class="form-control" id="descriptionInput" [(ngModel)]="newCustomerReview.reviewDescription"
               name="description" placeholder="Give a little description" rows="3"></textarea>
           </div>
           <div class="mb-3">
@@ -73,17 +72,17 @@
         <div class="col-6">
           <div class="mb-3">
             <label for="quotationInput" class="form-label fw-bold">Quotation</label>
-            <textarea class="form-control" id="quotationInput" [(ngModel)]="newCustomerReview.Quotation"
+            <textarea class="form-control" id="quotationInput" [(ngModel)]="newCustomerReview.quotation"
               name="quotation" placeholder="eg. I will work with him again." rows="3"></textarea>
           </div>
           <div class="mb-3">
             <label for="designationInput" class="form-label fw-bold">Designation</label>
-            <textarea class="form-control" id="designationInput" [(ngModel)]="newCustomerReview.Designation"
+            <textarea class="form-control" id="designationInput" [(ngModel)]="newCustomerReview.designation"
               name="designation" placeholder="eg. CEO" rows="3"></textarea>
           </div>
           <div class="mb-3">
             <label for="addressInput" class="form-label fw-bold">Address</label>
-            <textarea class="form-control" id="designationInput" [(ngModel)]="newCustomerReview.Address"
+            <textarea class="form-control" id="designationInput" [(ngModel)]="newCustomerReview.address"
               name="designation" placeholder="eg. CEO" rows="3"></textarea>
           </div>
         </div>
