@@ -1,8 +1,9 @@
-<div class="container-fluid my-5">
-  <h3 class="mb-4">Dynamic Testimonial Table</h3>
+<div class="container-fluid">
+  <h5 class="m-3">CustomerReview Table</h5>
   <!-- <hr> -->
-  <div class="row bg-white shadow-sm rounded m-3" *ngIf="(customerReviews.length > 0) && (customerReviewHeaders.length > 0)">
-    <div class=" col-12 ">
+  <div class="row bg-white shadow-sm rounded"
+    *ngIf="(customerReviews.length > 0) && (customerReviewHeaders.length > 0)">
+    <div class="col-12 p-3">
       <!-- Table Starts-->
       <table class="table table-bordered table-striped rounded">
         <thead class="">
@@ -10,7 +11,7 @@
             <th *ngFor="let header of customerReviewHeaders">
               {{ header || 'N/A' }}
             </th>
-            <th>Actions</th>
+            <th>Edit/Delete</th>
           </tr>
         </thead>
         <tbody>
@@ -25,12 +26,11 @@
                 {{ review[key] }}
               </ng-template>
             </td>
-
             <td>
-              <button class="btn btn-sm btn-primary me-2" (click)="editCustomerReview(i)">
+              <button class="btn btn-sm btn-primary me-2" (click)="EditCustomerReview(i)">
                 <i class="bi bi-pencil-fill"></i>
               </button>
-              <button class="btn btn-sm btn-danger" (click)="deleteCustomerReview(i)">
+              <button class="btn btn-sm btn-danger" (click)="DeleteCustomerReview(i)">
                 <i class="bi bi-trash-fill"></i>
               </button>
             </td>
@@ -42,12 +42,12 @@
 
 
 
-  <h3 class=" mb-4">Add {{selectedSection}} Data</h3>
   <!-- <hr class="" style="height: 2px; "> -->
-  <div class="bg-white shadow-sm p-3 mb-5 rounded">
+  <div class=" bg-white shadow-sm rounded">
+    <h5 class="mx-3 mt-3">Add {{selectedSection}} Data</h5>
     <form (ngSubmit)="editingIndex !== null ? UpdateCustomerReview() : CreateCustomerReview()">
-      <div class="row p-3 m-3">
-        <div class="col-6">
+      <div class="row p-3">
+        <div class="col-6 ">
           <div class="mb-3">
             <label for="imageSrcInput" class="form-label fw-bold">Email</label>
             <input type="text" class="form-control" id="emailSrcInput" [(ngModel)]="newCustomerReview.email"
@@ -66,10 +66,10 @@
           <div class="mb-3">
             <label for="photoInput" class="form-label fw-bold">Photo</label>
             <input type="file" class="form-control" id="photoInput" accept="image/*"
-              (change)="onFileSelected($event)" />
+              (change)="OnFileSelected($event)" />
           </div>
         </div>
-        <div class="col-6">
+        <div class="col-6 ">
           <div class="mb-3">
             <label for="quotationInput" class="form-label fw-bold">Quotation</label>
             <textarea class="form-control" id="quotationInput" [(ngModel)]="newCustomerReview.quotation"
@@ -86,11 +86,13 @@
               name="designation" placeholder="eg. CEO" rows="3"></textarea>
           </div>
         </div>
-        <div class="d-flex justify-content-end">
-          <button type="submit" class="btn btn-success" *ngIf="editingIndex === null"><i
-              class="bi bi-plus-circle me-2"></i>Add</button>
-          <button type="submit" class="btn btn-warning" *ngIf="editingIndex !== null"><i
-              class="bi bi-cloud-upload-fill me-2"></i>Update</button>
+        <div class="d-flex justify-content-end me-3">
+          <button type="submit" class="btn btn-success me-2" *ngIf="editingIndex === null"><i
+              class="bi bi-plus-circle me-1"></i>Add</button>
+          <button type="submit" class="btn btn-warning me-2" *ngIf="editingIndex !== null"><i
+              class="bi bi-cloud-upload-fill me-1"></i>Update</button>
+          <button type="button" class="btn btn-outline-primary" (click)="ResetForm()"><i
+              class="bi bi-arrow-clockwise "></i>Reset</button>
         </div>
       </div>
     </form>

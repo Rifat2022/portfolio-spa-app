@@ -16,24 +16,9 @@ export class CustomerReviewService {
     return this.http.get<CustomerReview[]>(this.apiUrl);
   }
 
-  // Create a new review
-  // createReview(formData: FormData): Observable<CustomerReview> {
-  //   let customerReviewJson = JSON.stringify(formData);
-  //   return this.http.post<CustomerReview>(this.apiUrl, customerReviewJson, {
-  //     headers: { 'Content-Type': 'application/json' }
-  //   });
-  // }
-  // createReview(review: CustomerReview, file: File): Observable<CustomerReview> {
-  //   const formData = new FormData();
-  //   formData.append('file', file);
-  //   // formData.append('review', JSON.stringify(review)); 
-  //   Object.keys(review).forEach(key => {
-  //     formData.append(key, (review as any)[key]);
-  //   });
-  //   return this.http.post<CustomerReview>(this.apiUrl, formData);
-  // }
-
-
+  createCustomerReviewWithFile(formData: FormData): Observable<CustomerReview> {
+    return this.http.post<CustomerReview>(this.apiUrl, formData);
+  }
   // Update an existing review
   updateCustomerReviewWithFile(id: number, updatedFormData: FormData): Observable<CustomerReview> {
     const url = `${this.apiUrl}/${id}`;
@@ -41,11 +26,8 @@ export class CustomerReviewService {
   }
 
   // Delete a review
-  deleteReview(id: number): Observable<void> {
+  deleteReview(id: number): Observable<string> {
     const url = `${this.apiUrl}/${id}`;
-    return this.http.delete<void>(url);
-  }
-  createCustomerReviewWithFile(formData: FormData): Observable<CustomerReview> {
-    return this.http.post<CustomerReview>(this.apiUrl, formData);
+    return this.http.delete<string>(url);
   }
 }

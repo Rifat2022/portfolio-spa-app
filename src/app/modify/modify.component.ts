@@ -20,12 +20,10 @@ export class ModifyComponent {
   customerReviewHeaders!: (keyof CustomerReview)[];
   customerReviews: CustomerReview[] = []
   files: FileDetails[] = []
-  selectedFile!: File;
+  selectedFile: File| null = null;;
   selectedSection = 'clientsReview';
-  editingIndex!: any;
-  previewKey: string = "fileDetails"
-  // rootDirectory: string = "D:/Personal/Task/Project/Portfolio_web_api_app/Portfolio_backend/Porfolio/wwwroot/";
-  // subDirectory: string = "assets/images/";
+  editingIndex: any = null;
+  previewKey: string = "fileDetails"; 
   newCustomerReview: any = {
     Id: undefined,
     Email: '',
@@ -49,18 +47,17 @@ export class ModifyComponent {
   constructor(
     private route: ActivatedRoute,
     private customerReviewService: CustomerReviewService,
-    private fileService: FileService) {
-
+    private fileService: FileService ) {
     // this.router.events.pipe(
     //   filter((event): event is NavigationEnd => event instanceof NavigationEnd)
     // ).subscribe(() => {
     // });
     this.route.paramMap.subscribe((params) => {
       const componentName = params.get('clientsReview') || '';
-      this.getComponentData(componentName);
+      this.GetAllCustomerReviews(componentName);
     });
   }
-  onFileSelected(event: any) {
+  OnFileSelected(event: any) {
     // var me = this; 
     const fileInput = event.target as HTMLInputElement;
     if (!(fileInput.files) || fileInput.files.length == 0) {
@@ -71,7 +68,6 @@ export class ModifyComponent {
     //   this.selectedFiles = Array.from(fileInput.files);
     // }
     this.selectedFile = fileInput.files[0];
-
   }
 
   CreateCustomerReview() {
@@ -90,32 +86,39 @@ export class ModifyComponent {
     this.customerReviewService.createCustomerReviewWithFile(customerReviewFormData)
       .subscribe({
         next: (customerReview: any) => {
-          let ncr = this.setFilePath(customerReview)
+          let ncr = this.SetFilePath(customerReview)
           this.customerReviews.push(ncr);
-          this.resetForm();
+          // this.selectedFile = null; 
         },
         error: (err: any) => {
           console.log(err.message);
+        },
+        complete: () => {
+          // console.log("Request Completed");
+          this.ResetForm();
+
         }
       })
-
   }
 
-  getComponentData(name: string) {
+  GetAllCustomerReviews(name: string) {
     if (name == this.selectedSection) {
       this.customerReviewService.getAllReviews().subscribe({
         next: (reviews: CustomerReview[]) => {
-          this.customerReviewHeaders = Object.keys(reviews[0]) as (keyof CustomerReview)[];
-          reviews.map((cr: CustomerReview) => {
-            const blobUrl = this.fileService.createBlobUrlFromByteArr(cr.fileDetails.data, cr.fileDetails.contentType);
-            cr.fileDetails.path = blobUrl ? blobUrl : '';
-            this.customerReviews.push(cr)
-          })
+          if (reviews.length > 0) {
+            this.customerReviewHeaders = Object.keys(reviews[0]) as (keyof CustomerReview)[];
+            reviews.map((cr: CustomerReview) => {
+              const blobUrl = this.fileService.createBlobUrlFromBase64String(cr.fileDetails.data, cr.fileDetails.contentType);
+              cr.fileDetails.path = blobUrl ? blobUrl : '';
+              this.customerReviews.push(cr);              
+            })
+          }
         },
         error: ((error: any) => {
           console.log("Request failed!" + error);
         }),
         complete: () => {
+          console.log("Request Completed");
 
         }
       })
@@ -123,7 +126,7 @@ export class ModifyComponent {
   }
 
 
-  editCustomerReview(index: number) {
+  EditCustomerReview(index: number) {
     this.editingIndex = index;
     this.newCustomerReview = { ...this.customerReviews[index] };
   }
@@ -142,8 +145,8 @@ export class ModifyComponent {
       updatedCustomerReviewFormData.append(`UpdatedCustomerReview`, JSON.stringify(this.newCustomerReview));
 
       this.customerReviewService.updateCustomerReviewWithFile(CustomerReviewId, updatedCustomerReviewFormData).subscribe({
-        next: (ucr: CustomerReview) => {
-          let nucr = this.setFilePath(ucr); 
+        next: (updatedCustomerReview: CustomerReview) => {
+          let nucr = this.SetFilePath(updatedCustomerReview); 
           //update the customerReviews
           this.customerReviews[this.editingIndex] = nucr;
         },
@@ -151,73 +154,58 @@ export class ModifyComponent {
           console.log("updated request failed!" + err.message);
         },
         complete: () => {
+          this.ResetForm();
           console.log("updated request completed")
         }
-      })
+      }); 
     }
 
   }
 
-  setFilePath(cr: CustomerReview):CustomerReview {
-    //make the file renderable
-    const blobUrl = this.fileService.createBlobUrlFromByteArr(cr.fileDetails.data, cr.fileDetails.contentType);
+  SetFilePath(cr: CustomerReview):CustomerReview {
+    const blobUrl = this.fileService.createBlobUrlFromBase64String(cr.fileDetails.data, cr.fileDetails.contentType);
     cr.fileDetails.path = blobUrl ? blobUrl : '';
     return cr; 
   }
-  // modifyFilepath(review: CustomerReview){
-  //   try{
-  //     let fileDetails : FileDetails = JSON.parse(review.fileDetails)
-  //     review.fileDetails = fileDetails.Path;
-  //     return review; 
-  //   }
-  //   catch(ex){
-  //     return review; 
-  //   }
-  // }
 
-
-
-  // SaveData() {
-  //   let idx = 0;
-  //   this.CustomerReviewData.forEach(review => {
-  //     this.customerReviewService.createReview(review).subscribe((data: any) => {
-  //       idx++;
-  //       if (idx === this.CustomerReviewData.length) {
-  //         console.log("update success")
-  //       }
-  //     }, (error: any) => {
-  //       console.log("Failed & " + error);
-  //     });
-  //   })
-  //   //implement saving all at a time. 
-  // }
-
-  deleteCustomerReview(index: number) {
-    this.customerReviews.splice(index, 1);
-    this.resetForm();
+  DeleteCustomerReview(index: number) {
+    let customerReviewId = this.customerReviews[index].id;
+    if (customerReviewId == null)
+      return;
+    this.customerReviewService.deleteReview(customerReviewId).subscribe({
+      next: (isDeleted: any) => {
+        this.customerReviews.splice(index, 1); 
+      },
+      error: (err: any) => {
+        console.log("deletion failed!" + err);
+      },
+      complete: () => {
+        console.log('completed!')
+      }
+    })
   }
 
-  resetForm() {
+  ResetForm() {
     this.newCustomerReview = {
-      id: undefined,
-      email: '',
-      reviewDescription: '',
-      reviewTime: '',
-      name: '',
-      fileDetailsId: undefined,
-      fileDetails: {
-        FileDetailsId: undefined,
-        FileName: '',
-        ContentType: '',
-        Path: '',
-        Data: '',
-
-      },
-      quotation: '',
-      designation: '',
-      address: '',
+      // id: undefined,
+      // email: '',
+      // reviewDescription: '',
+      // reviewTime: '',
+      // name: '',
+      // fileDetailsId: undefined,
+      // fileDetails: {
+      //   FileDetailsId: undefined,
+      //   FileName: '',
+      //   ContentType: '',
+      //   Path: '',
+      //   Data: '',
+      // },
+      // quotation: '',
+      // designation: '',
+      // address: '',
     };
     this.editingIndex = null;
+    this.selectedFile = null; 
   }
 
   // addTestimonial() {

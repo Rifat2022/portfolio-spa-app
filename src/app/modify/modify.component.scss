@@ -23,8 +23,10 @@ textarea {
 }
 .circled_img {
   overflow: hidden;
-  border-top-left-radius: 20% 20%; 
-  border-top-right-radius: 20% 20%; 
-  border-bottom-right-radius: 20% 20%; 
-  border-bottom-left-radius: 20% 20%;
+  width: 50px !important;
+  height: 50px !important;
+  border-top-left-radius: 50% 50%; 
+  border-top-right-radius: 50% 50%; 
+  border-bottom-right-radius: 50% 50%; 
+  border-bottom-left-radius: 50% 50%;
 }
