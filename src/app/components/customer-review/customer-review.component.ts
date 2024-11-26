@@ -19,7 +19,7 @@ export class CustomerReviewComponent {
   constructor(private reviewService: CustomerReviewService, private http: HttpClient) { }
 
   ngOnInit(): void {
-    this.getReviews();
+    // this.getReviews();
   }
   createCustomerReviewWithFile(formData: FormData): Observable<CustomerReview> {
     return this.http.post<CustomerReview>(this.apiUrl, formData);
