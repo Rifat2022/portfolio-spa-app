@@ -8,35 +8,25 @@ import { CustomerReview } from './customer-review.model';
 })
 export class CustomerReviewService {
 
-  environment = {
-    apiUrl : 'http://localhost:5001/'
-  }
-  private apiUrl = `${this.environment.apiUrl}/api/customerreview`;
-
+  private readonly apiUrl:string = 'http://localhost:5001/api/CustomerReview';
   constructor(private http: HttpClient) { }
-
-  // Get all customer reviews
-  getAllCustomerReviews(): Observable<CustomerReview[]> {
+  // Get all reviews
+  getAllReviews(): Observable<CustomerReview[]> {
     return this.http.get<CustomerReview[]>(this.apiUrl);
   }
 
-  // Get a single customer review by ID
-  getCustomerReviewById(id: number): Observable<CustomerReview> {
-    return this.http.get<CustomerReview>(`${this.apiUrl}/${id}`);
+  createCustomerReviewWithFile(formData: FormData): Observable<CustomerReview> {
+    return this.http.post<CustomerReview>(this.apiUrl, formData);
+  }
+  // Update an existing review
+  updateCustomerReviewWithFile(id: number, updatedFormData: FormData): Observable<CustomerReview> {
+    const url = `${this.apiUrl}/${id}`;
+    return this.http.put<CustomerReview>(url, updatedFormData);
+  }
+  // Delete a review
+  deleteReview(id: number): Observable<string> {
+    const url = `${this.apiUrl}/${id}`;
+    return this.http.delete<string>(url);
   }
 
-  // Create a new customer review
-  createCustomerReview(customerReview: CustomerReview): Observable<CustomerReview> {
-    return this.http.post<CustomerReview>(this.apiUrl, customerReview);
-  }
-
-  // Update an existing customer review
-  updateCustomerReview(id: number, customerReview: CustomerReview): Observable<void> {
-    return this.http.put<void>(`${this.apiUrl}/${id}`, customerReview);
-  }
-
-  // Delete a customer review by ID
-  deleteCustomerReview(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${id}`);
-  }
 }

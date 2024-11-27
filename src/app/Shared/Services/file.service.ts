@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { FileDetails } from '../components/customer-review/customer-review.model';
 
 @Injectable({
   providedIn: 'root'

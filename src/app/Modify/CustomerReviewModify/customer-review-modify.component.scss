@@ -1,9 +1,10 @@
-.table {
-  margin-bottom: 2rem;
-}
+
 
 textarea {
   resize: none;
+}
+.table {
+  margin-bottom: 2rem;
 }
 .circular_image {
   width: 200px;
@@ -11,13 +12,6 @@ textarea {
   border-radius: 50%;
   overflow: hidden;
   background-color: blue;
-  /* commented for demo
-  float: left;
-  margin-left: 125px;
-  margin-top: 20px;
-  */
-  
-  /*for demo*/
   display:inline-block;
   vertical-align:middle;
 }

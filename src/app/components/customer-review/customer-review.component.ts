@@ -4,6 +4,9 @@ import { CustomerReviewService } from './customer-review.service';
 import { CustomerReview } from './customer-review.model';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { ActivatedRoute } from '@angular/router';
+import { ToastrService } from 'ngx-toastr';
+import { FileService } from '../../Shared/Services/file.service';
 
 @Component({
   selector: 'app-customer-review',
@@ -14,30 +17,27 @@ import { Observable } from 'rxjs';
   styleUrl: './customer-review.component.scss'
 })
 export class CustomerReviewComponent {
-  reviews: CustomerReview[] = [];
+  customerReviews: CustomerReview[] = []
+  customerReviewHeaders!: (keyof CustomerReview)[];
+
   apiUrl = "http://localhost:5001/api/customerreview"
-  constructor(private reviewService: CustomerReviewService, private http: HttpClient) { }
-
-  ngOnInit(): void {
-    // this.getReviews();
-  }
-  createCustomerReviewWithFile(formData: FormData): Observable<CustomerReview> {
-    return this.http.post<CustomerReview>(this.apiUrl, formData);
-  }
-  getReviews(): void {
-    this.reviewService.getAllCustomerReviews().subscribe(
-      (reviews) => {
-        this.reviews = reviews;
+  constructor(
+      private fileService: FileService,
+      private reviewService: CustomerReviewService,
+      private toastrService: ToastrService 
+    ) {
+    this.reviewService.getAllReviews().subscribe({
+      next: (reviews: CustomerReview[]) => {
+        reviews.map((cr: CustomerReview) => {
+          const blobUrl = this.fileService.createBlobUrlFromBase64String(cr.fileDetails.data, cr.fileDetails.contentType);
+          cr.fileDetails.path = blobUrl ? blobUrl : '';
+          this.customerReviews.push(cr);
+        })
       },
-      (error) => {
-        console.error('Error fetching reviews:', error);
-      }
-    );
-  }
-
-  deleteReview(id: number): void {
-    this.reviewService.deleteCustomerReview(id).subscribe(() => {
-      this.reviews = this.reviews.filter(review => review.id !== id);
-    });
-  }
+      error: (err: any) => {
+        this.toastrService.error(err.message, "Getting Customer Review")
+      },
+      complete: () => { }
+    })
+  }  
 }

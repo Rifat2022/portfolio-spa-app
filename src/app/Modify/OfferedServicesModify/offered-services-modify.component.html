@@ -1,0 +1,86 @@
+<div class="container-fluid">
+    <h5 class="x-3 mt-3">Offered Services Table</h5>
+    <!-- <hr> -->
+    <div class="row bg-white shadow-sm rounded"
+      *ngIf="(OfferedServices.length > 0) && (offeredServicesHeaders.length > 0)">
+      <div class="col-12 p-3">
+        <!-- Table Starts-->
+        <table class="table table-bordered table-striped rounded">
+          <thead class="">
+            <tr class="text-capitalize fw-normal">
+              <th *ngFor="let header of offeredServicesHeaders">
+                {{ header || 'N/A' }}
+              </th>
+              <th>Edit/Delete</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let service of OfferedServices; let i = index">
+              <td *ngFor="let key of offeredServicesHeaders">
+                {{ service[key] }}
+              </td>
+              <td>
+                <button class="btn btn-sm btn-primary me-2" (click)="EditOfferedServices(i)">
+                  <i class="bi bi-pencil-fill"></i>
+                </button>
+                <button class="btn btn-sm btn-danger" (click)="DeleteOfferedServices(i)">
+                  <i class="bi bi-trash-fill"></i>
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  
+  
+    <!-- <hr class="" style="height: 2px; "> -->
+    <div class=" bg-white shadow-sm rounded">
+      <h5 class="mx-3 mt-3">Add Offered Services Data</h5>
+      <form (ngSubmit)="editingIndex !== null ? UpdateOfferedServices() : CreateOfferedService()">
+        <div class="row p-3">
+          <!-- column  -->
+          <div class="col-6 ">
+            <div class="mb-3">
+              <label for="bootstrap_icon_codeInput" class="form-label fw-bold">Bootstrap icon code</label>
+              <input type="text" class="form-control" id="bootstrap_icon_codeSrcInput" [(ngModel)]="newOfferedService.bootstrap_icon_code"
+                name="bootstrap_icon_codeSrc" placeholder="Enter bootstrap_icon_code source" />
+            </div>
+            <div class="mb-3">
+              <label for="descriptionInput" class="form-label fw-bold">Description</label>
+              <input type="text" class="form-control" id="descriptionInput" [(ngModel)]="newOfferedService.description" 
+              name="description" placeholder="Enter description" />
+            </div>
+            <div class="mb-3">
+                <label for="headingsInput" class="form-label fw-bold">Headings</label>
+                <textarea class="form-control" id="headingsInput" [(ngModel)]="newOfferedService.headings"
+                  name="headings" placeholder="eg. Services" rows="3"></textarea>
+              </div>
+          </div>
+          <!-- column  -->
+          <div class="col-6 ">
+            <div class="mb-3">
+              <label for="quoteInput" class="form-label fw-bold">Quote</label>
+              <textarea class="form-control" id="quoteInput" [(ngModel)]="newOfferedService.quote"
+                name="quote" placeholder="eg. Your satisfaction is my destiny" rows="3"></textarea>
+            </div>
+            <div class="mb-3">
+              <label for="service_nameInput" class="form-label fw-bold">Service Name</label>
+              <textarea class="form-control" id="service_nameInput" [(ngModel)]="newOfferedService.service_name"
+                name="service_name" placeholder="eg. CEO" rows="3"></textarea>
+            </div>
+          </div>
+          <!-- column  -->
+
+          <div class="d-flex justify-content-end me-3">
+            <button type="submit" class="btn btn-success me-2" *ngIf="editingIndex === null"><i
+                class="bi bi-plus-circle me-1"></i>Add</button>
+            <button type="submit" class="btn btn-warning me-2" *ngIf="editingIndex !== null"><i
+                class="bi bi-cloud-upload-fill me-1"></i>Update</button>
+            <button type="button" class="btn btn-outline-primary" (click)="ResetForm()"><i
+                class="bi bi-arrow-clockwise "></i>Reset</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>

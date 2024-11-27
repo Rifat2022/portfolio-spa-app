@@ -1,79 +1,31 @@
 <div class="container-fluid custom-customer-review py-5">
   <h2 class="text-center chrome mb-4">Customer Review</h2>
   <div class="d-flex justify-content-around gap-3">
-    <div class="profile-container mx-auto shadow m-3" style="max-width: 90%; width: 30rem;">
+    <div *ngFor="let review of customerReviews; let i= index" 
+    class="profile-container mx-auto shadow m-3" 
+    style="max-width: 90%; width: 30rem;">
+
       <div class="d-flex flex-column justify-content-center align-items-center p-4">
         <div class="image mb-3">
           <img 
             class="circled-img" 
-            src="../../../assets/img/rifat-hero-bg.jpg" 
+            [src]="review['fileDetails'].path || null" 
             alt="John Doe"            
           >
         </div>      
-        <h5 class="mb-1">John Doe</h5>
-        <h6 class="text-muted mb-3">CEO, Microsoft</h6>
+        <h5 class="mb-1" >{{review['name']}}</h5>
+        <h6 class="text-muted mb-3">{{review['designation']}}</h6>
         <p class="text-center text-secondary">
-          Lorem ipsum dolor sit amet consectetur, 
-          adipisicing elit. Ut aliquam reprehenderit 
-          accusantium tempore totam error omnis corrupti 
-          sapiente nemo impedit!
+          {{review['reviewDescription']}}
         </p>
       </div>
       <div class="dot-container d-flex justify-content-center">
-        <div class="dot me-1"></div>
-        <div class="dot me-1"></div>
-        <div class="dot me-1"></div>
+        <div *ngFor="let review of customerReviews; let i= index" class="dot me-1"></div>
       </div>
     </div>
-    <div class="profile-container mx-auto shadow m-3" style="max-width: 90%; width: 30rem;">
-      <div class="d-flex flex-column justify-content-center align-items-center p-4">
-        <div class="image mb-3">
-          <img 
-            class="circled-img" 
-            src="../../../assets/img/rifat-hero-bg.jpg" 
-            alt="John Doe"            
-          >
-        </div>      
-        <h5 class="mb-1">John Doe</h5>
-        <h6 class="text-muted mb-3">CEO, Microsoft</h6>
-        <p class="text-center text-secondary">
-          Lorem ipsum dolor sit amet consectetur, 
-          adipisicing elit. Ut aliquam reprehenderit 
-          accusantium tempore totam error omnis corrupti 
-          sapiente nemo impedit!
-        </p>
-      </div>
-      <div class="dot-container d-flex justify-content-center">
-        <div class="dot me-1"></div>
-        <div class="dot me-1"></div>
-        <div class="dot me-1"></div>
-      </div>
-    </div>
-    <div class="profile-container mx-auto shadow m-3" style="max-width: 90%; width: 30rem;">
-      <div class="d-flex flex-column justify-content-center align-items-center p-4">
-        <div class="image mb-3">
-          <img 
-            class="circled-img" 
-            src="../../../assets/img/rifat-hero-bg.jpg" 
-            alt="John Doe"            
-          >
-        </div>      
-        <h5 class="mb-1">John Doe</h5>
-        <h6 class="text-muted mb-3">CEO, Microsoft</h6>
-        <p class="text-center text-secondary">
-          Lorem ipsum dolor sit amet consectetur, 
-          adipisicing elit. Ut aliquam reprehenderit 
-          accusantium tempore totam error omnis corrupti 
-          sapiente nemo impedit!
-        </p>
-      </div>
-      <div class="dot-container d-flex justify-content-center">
-        <div class="dot me-1"></div>
-        <div class="dot me-1"></div>
-        <div class="dot me-1"></div>
-      </div>
-    </div>
+
   </div>
 
 </div>
 
+<!-- ../../../assets/img/rifat-hero-bg.jpg -->

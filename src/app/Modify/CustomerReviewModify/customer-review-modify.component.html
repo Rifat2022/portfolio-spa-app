@@ -1,5 +1,5 @@
 <div class="container-fluid">
-  <h5 class="m-3">CustomerReview Table</h5>
+  <h5 class="x-3 mt-3">CustomerReview Table</h5>
   <!-- <hr> -->
   <div class="row bg-white shadow-sm rounded"
     *ngIf="(customerReviews.length > 0) && (customerReviewHeaders.length > 0)">
@@ -44,7 +44,7 @@
 
   <!-- <hr class="" style="height: 2px; "> -->
   <div class=" bg-white shadow-sm rounded">
-    <h5 class="mx-3 mt-3">Add {{selectedSection}} Data</h5>
+    <h5 class="mx-3 mt-3">Add {{selectedSection.ClientReview}} Data</h5>
     <form (ngSubmit)="editingIndex !== null ? UpdateCustomerReview() : CreateCustomerReview()">
       <div class="row p-3">
         <div class="col-6 ">

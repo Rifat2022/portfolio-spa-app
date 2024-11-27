@@ -1,34 +1,25 @@
+import { Component, OnInit, CUSTOM_ELEMENTS_SCHEMA, ElementRef, AfterViewInit, ViewChild, PLATFORM_ID, Inject, HostListener, Renderer2, OnDestroy } from "@angular/core";
 import { CommonModule, isPlatformBrowser } from "@angular/common";
-import {
-  Component,
-  OnInit,
-  CUSTOM_ELEMENTS_SCHEMA,
-  ElementRef,
-  AfterViewInit,
-  ViewChild,
-  PLATFORM_ID,
-  Inject,
-  HostListener,
-  Renderer2,
-  OnDestroy,
-} from "@angular/core";
 import { ContactComponent } from "../Contact/contact.component";
 import { NavLink } from "../Models/navLinks.model";
 import { Services } from "../Models/services.model";
 import { Counter } from "../Models/counter.model";
 import { Portfolio } from "../Models/portfolio.model";
-import { Testimonial } from "../Models/testimonial.model";
 import { BlogPost } from "../Models/blog-post.model";
-import { DataService } from "../Services/data.service";
+import { Router, RouterModule } from "@angular/router";
 import Typed from 'typed.js';
-import GLightbox from 'glightbox';
-import { ROUTER_CONFIGURATION, Router, RouterLink, RouterModule, RouterOutlet } from "@angular/router";
-import { HttpClientModule } from "@angular/common/http";
+import { DataService } from "../Shared/Services/data.service";
+import { CustomerReviewComponent } from "../components/customer-review/customer-review.component";
 declare var _: any;
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, ContactComponent, RouterModule, RouterOutlet, RouterLink],
+  imports: [
+    CommonModule,
+    ContactComponent,
+    RouterModule,
+    CustomerReviewComponent
+  ],
   providers: [],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss',
@@ -40,7 +31,6 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   services!: Services[]
   counters!: Counter[]
   workItems !: Portfolio[]
-  testimonials!: Testimonial[]
   blogPosts!: BlogPost[]
   isDrawerOpen: boolean = false;
 
@@ -215,7 +205,6 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     me.services = Data.services;
     me.counters = Data.counters;
     me.workItems = Data.workItems;
-    me.testimonials = Data.testimonials;
     me.blogPosts = Data.blogPosts;
   }
   private triggerslideNext() {
