@@ -6,6 +6,7 @@ import { BlogComponent } from './Blog/blog/blog.component';
 import { TestComponent } from './test/test.component';
 import { CustomerReviewComponent } from './components/customer-review/customer-review.component';
 import { ModifyComponent } from './Modify/parent/modify.component';
+import { OfferedServicesComponent } from './components/offered-services/offered-services.component';
 
 export const routes: Routes = [
     { path: 'home', component: HomeComponent },
@@ -34,6 +35,7 @@ export const routes: Routes = [
     { path: 'blog', component: BlogComponent },
     { path: 'test', component: TestComponent },
     { path: 'customer-reviews', component: CustomerReviewComponent },
+    { path: 'offered-services', component: OfferedServicesComponent },
 
     { path: '', redirectTo: '/home', pathMatch: 'full' }, // Default route
     { path: '**', component: PageNotFoundComponent }  // Wildcard route for a 404 page

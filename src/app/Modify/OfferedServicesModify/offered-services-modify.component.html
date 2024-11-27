@@ -1,5 +1,5 @@
 <div class="container-fluid">
-    <h5 class="x-3 mt-3">Offered Services Table</h5>
+    <h5 class="mx-3 mt-3">Offered Services Table</h5>
     <!-- <hr> -->
     <div class="row bg-white shadow-sm rounded"
       *ngIf="(OfferedServices.length > 0) && (offeredServicesHeaders.length > 0)">
@@ -8,14 +8,14 @@
         <table class="table table-bordered table-striped rounded">
           <thead class="">
             <tr class="text-capitalize fw-normal">
-              <th *ngFor="let header of offeredServicesHeaders">
+              <th *ngFor="let header of this.offeredServicesHeaders">
                 {{ header || 'N/A' }}
               </th>
               <th>Edit/Delete</th>
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let service of OfferedServices; let i = index">
+            <tr *ngFor="let service of this.OfferedServices; let i = index">
               <td *ngFor="let key of offeredServicesHeaders">
                 {{ service[key] }}
               </td>
@@ -42,30 +42,30 @@
             <div class="mb-3">
               <label for="bootstrap_icon_codeInput" class="form-label fw-bold">Bootstrap icon code</label>
               <input type="text" class="form-control" id="bootstrap_icon_codeSrcInput" [(ngModel)]="newOfferedService.bootstrap_icon_code"
-                name="bootstrap_icon_codeSrc" placeholder="Enter bootstrap_icon_code source" />
+                name="bootstrap_icon_codeSrc" placeholder="Enter bootstrap class. E.g bi bi circle" />
             </div>
             <div class="mb-3">
               <label for="descriptionInput" class="form-label fw-bold">Description</label>
-              <input type="text" class="form-control" id="descriptionInput" [(ngModel)]="newOfferedService.description" 
-              name="description" placeholder="Enter description" />
+              <textarea type="text" class="form-control" id="descriptionInput" [(ngModel)]="newOfferedService.description" 
+              name="description" placeholder="Give a service description" rows="3"></textarea>
             </div>
             <div class="mb-3">
                 <label for="headingsInput" class="form-label fw-bold">Headings</label>
-                <textarea class="form-control" id="headingsInput" [(ngModel)]="newOfferedService.headings"
-                  name="headings" placeholder="eg. Services" rows="3"></textarea>
+                <input class="form-control" id="headingsInput" [(ngModel)]="newOfferedService.headings"
+                  name="headings" placeholder="eg. Services" />
               </div>
           </div>
           <!-- column  -->
           <div class="col-6 ">
             <div class="mb-3">
               <label for="quoteInput" class="form-label fw-bold">Quote</label>
-              <textarea class="form-control" id="quoteInput" [(ngModel)]="newOfferedService.quote"
-                name="quote" placeholder="eg. Your satisfaction is my destiny" rows="3"></textarea>
+              <input class="form-control" id="quoteInput" [(ngModel)]="newOfferedService.quote"
+                name="quote" placeholder="eg. Your satisfaction is my destiny" />
             </div>
             <div class="mb-3">
-              <label for="service_nameInput" class="form-label fw-bold">Service Name</label>
-              <textarea class="form-control" id="service_nameInput" [(ngModel)]="newOfferedService.service_name"
-                name="service_name" placeholder="eg. CEO" rows="3"></textarea>
+              <label for="service_name_Input" class="form-label fw-bold">Service Name</label>
+              <input class="form-control" id="service_name_Input" [(ngModel)]="newOfferedService.service_name"
+                name="service_name" placeholder="eg. WEB DESIGN" />
             </div>
           </div>
           <!-- column  -->

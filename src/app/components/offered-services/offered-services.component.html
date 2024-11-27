@@ -1,1 +1,30 @@
-<p>offered-services works!</p>
+<section id="services" class="services-mf pt-5 route">
+    <div class="container">
+      <div class="row">
+        <div class="col-sm-12">
+          <div class="title-box text-center">
+            <h3 class="title-a">Services</h3>
+            <p class="subtitle-a">
+              Lorem ipsum, dolor sit amet consectetur adipisicing elit.
+            </p>
+            <div class="line-mf"></div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-4" *ngFor="let service of this.OfferedServices; let i = index">
+          <div class="service-box">
+            <div class="service-ico">
+              <span class="ico-circle"><i class="{{service.bootstrap_icon_code}}"></i></span>
+            </div>
+            <div class="service-content">
+              <h2 class="s-title">{{ service?.service_name }}</h2>
+              <p class="s-description text-center">
+                {{ service?.description }}
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>

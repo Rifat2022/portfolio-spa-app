@@ -10,6 +10,7 @@ import { Router, RouterModule } from "@angular/router";
 import Typed from 'typed.js';
 import { DataService } from "../Shared/Services/data.service";
 import { CustomerReviewComponent } from "../components/customer-review/customer-review.component";
+import { OfferedServicesComponent } from "../components/offered-services/offered-services.component";
 declare var _: any;
 @Component({
   selector: 'app-home',
@@ -18,7 +19,8 @@ declare var _: any;
     CommonModule,
     ContactComponent,
     RouterModule,
-    CustomerReviewComponent
+    CustomerReviewComponent, 
+    OfferedServicesComponent
   ],
   providers: [],
   templateUrl: './home.component.html',

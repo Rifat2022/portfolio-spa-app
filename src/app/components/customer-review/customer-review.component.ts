@@ -19,8 +19,8 @@ import { FileService } from '../../Shared/Services/file.service';
 export class CustomerReviewComponent {
   customerReviews: CustomerReview[] = []
   customerReviewHeaders!: (keyof CustomerReview)[];
-
-  apiUrl = "http://localhost:5001/api/customerreview"
+  apiUrl = "http://localhost:5001/api/customerreview"; 
+  
   constructor(
       private fileService: FileService,
       private reviewService: CustomerReviewService,

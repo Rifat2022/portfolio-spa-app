@@ -41,8 +41,8 @@ export class OfferedServicesModifyComponent {
   }
 
   CreateOfferedService() {
-    this.newOfferedService.date = new Date().toLocaleString();
     const offeredServiceFormData = new FormData();
+    this.newOfferedService.date = new Date().toLocaleString();
     offeredServiceFormData.append('OfferedService', JSON.stringify(this.newOfferedService));
 
     this.offeredServicesService.createOfferedService(offeredServiceFormData)
