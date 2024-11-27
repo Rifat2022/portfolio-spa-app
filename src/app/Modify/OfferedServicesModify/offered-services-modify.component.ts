@@ -88,7 +88,7 @@ export class OfferedServicesModifyComponent {
 
   UpdateOfferedServices() {
     if (this.editingIndex !== null) {
-      let OfferedServicesId = this.OfferedServices[this.editingIndex].id; // get the id of the OfferedServicesId of the selected array index
+      let OfferedServicesId = this.OfferedServices[this.editingIndex].offeredServiceId; // get the id of the OfferedServicesId of the selected array index
       if (OfferedServicesId == null) {
         return;
       }
@@ -112,7 +112,7 @@ export class OfferedServicesModifyComponent {
 
   }
   DeleteOfferedServices(index: number) {
-    let OfferedServicesId = this.OfferedServices[index].id;
+    let OfferedServicesId = this.OfferedServices[index].offeredServiceId;
     if (OfferedServicesId == null)
       return;
     this.offeredServicesService.deleteOfferedService(OfferedServicesId).subscribe({

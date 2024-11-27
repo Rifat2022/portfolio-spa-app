@@ -1,20 +1,6 @@
-1) Setup the page routing. 
-2) change the home picture. 
-3) * create the objects for the information of webpage 
+model name: Services
 
-
-function () {
-        var _instance = {};
-        var _openCase = function (workflowVersionDefinitionId, caseId, taskId, workflowElementId, dynamicFormContext) {
-            dynamicFormContext.createSiderianFormWindow();
-            dynamicFormContext.ShowSiderianFormWindowByActiveTask(caseId, true);
-			//or
-			dynamicFormContext.ShowSiderianFormWindow(workflowVersionDefinitionId, caseId, taskId, workflowElementId, dynamicFormContext)
-        }
-        _instance.OpenCase = function (workflowVersionDefinitionId, caseId, taskId, workflowElementId, dynamicFormContext) {
-            return _openCase(workflowVersionDefinitionId, caseId, taskId, workflowElementId, dynamicFormContext);
-        }; 
-        return _instance;
-    }
-	
-	ShowSiderianFormWindow
+quote
+bootstrap_icon_code
+service_name
+description

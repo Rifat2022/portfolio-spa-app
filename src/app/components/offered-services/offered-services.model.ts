@@ -1,5 +1,5 @@
 export interface OfferedServices {
-    id : undefined | number; 
+    offeredServiceId : undefined | number; 
     bootstrap_icon_code: string; 
     description: string; 
     headings: string; 
