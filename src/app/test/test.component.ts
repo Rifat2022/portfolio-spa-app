@@ -30,24 +30,30 @@ export class TestComponent implements OnInit, AfterViewInit {
   @ViewChild('warning', { read: ViewContainerRef }) warningContainer!: ViewContainerRef;
   // "title", "slug", "meta-title", "meta-description", "blog-video"
   uniqueProperties: string[] = [];
-  blogForm!: FormGroup;
   isEditMode: boolean = false;
   progress: number = 0;
   message: string = '';
-  tools: any = {
-    title: 'title', 
-    blogPhoto: 'blog-photo', 
-    heading: 'heading', 
-    slug: 'slug', 
-    metaTitle: 'meta-title', 
-    metaDescription: 'meta-description', 
-    blogContent: 'blog-content', 
-    blogVideo: 'blog-video', 
+  serial = 0;
+  Tools: any = {
+    title: 'title',
+    coverPhoto: 'cover-photo',
+    heading: 'heading',
+    slug: 'slug',
+    metaTitle: 'meta-title',
+    metaDescription: 'meta-description',
+    blogContent: 'blog-content',
+    contentPhoto: 'content-photo',
+    contentVideo: 'content-video',
   }
 
-  newBlog: any = {
-    files: [],
-    content: [] as string[],
+  InputType = {
+    textInput: ['title', 'heading', 'slug', 'meta-title', 'meta-description'],
+    textareaInput: ["blog-content"],
+    fileInput: ['cover-photo', 'content-photo', 'content-video']
+  }
+  newBlog!: {
+    fileContainer: { selectedTool: string; serial: number; file: File }[];
+    contentContainer: { selectedTool: string; serial: number; blogContent: string }[];
   };
   /**
    * Constructor
@@ -56,7 +62,10 @@ export class TestComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit(): void {
-    this.newBlog = { files: [] };
+    this.newBlog = {
+      fileContainer: [],
+      contentContainer: [],
+    };
   }
 
   ngAfterViewInit(): void {
@@ -65,8 +74,8 @@ export class TestComponent implements OnInit, AfterViewInit {
 
   CreateBlogElementsBySelectedTool(element: HTMLElement) {
     const selectedTool = element?.id;
-    if(!this.IsValidateBlogElement(selectedTool)) {
-      return; 
+    if (!this.IsValidateBlogElement(selectedTool)) {
+      return;
     }
     if (!this.uniqueProperties.includes(selectedTool)) {
       this.uniqueProperties.push(selectedTool);
@@ -75,34 +84,30 @@ export class TestComponent implements OnInit, AfterViewInit {
 
     let newlyCreatedParentDiv = this.CreateElements(inputType, selectedTool)
     // loads into DOM
-    if(selectedTool === this.tools.blogContent) {
-      let newlyCreatedPhotoElement = this.CreateBlogsChildElement(this.tools.blogPhoto)
-      this.renderer2.appendChild(newlyCreatedParentDiv, newlyCreatedPhotoElement); 
-    }
     this.renderer2.appendChild(this.container.element.nativeElement, newlyCreatedParentDiv);
   }
 
   CreateBlogsChildElement(contentType: string) {
     let inputType: string = this.GetInputType(contentType);
     let newlyCreatedParentDiv = this.CreateElements(inputType, contentType)
-    return newlyCreatedParentDiv; 
+    return newlyCreatedParentDiv;
   }
 
-  IsValidateBlogElement(tool:string) :boolean{
+  IsValidateBlogElement(tool: string): boolean {
     if (!tool || this.uniqueProperties.includes(tool)) {
       this.CreateWarning(`Multiple ${tool} not alowed!`);
       return false
     }
-    return true; 
+    return true;
   }
   GetInputType(selectedtool: string): string {
-    if (['title', 'heading', 'slug', 'meta-title', 'meta-description'].includes(selectedtool)) {
+    if (this.InputType.textInput.includes(selectedtool)) {
       return 'text';
     }
-    else if (selectedtool === 'blog-content') {
+    else if (this.InputType.textareaInput.includes(selectedtool)) {
       return 'textarea';
     }
-    else if (['blog-photo', 'blog-video', 'content-photo'].includes(selectedtool)) {
+    else if (this.InputType.fileInput.includes(selectedtool)) {
       return 'file';
     }
     else {
@@ -111,19 +116,16 @@ export class TestComponent implements OnInit, AfterViewInit {
   }
 
   CreateElements(type: string, selectedTool: string) {
-    const newParent = this.renderer2.createElement('div');
+    const newParentDiv = this.renderer2.createElement('div');
     const label = this.renderer2.createElement('label');
     const inputElement = (type === 'textarea') ? this.renderer2.createElement('textarea') : this.renderer2.createElement('input');
-
     let newLabel = this.ConfigureLabel(label, selectedTool);
     let newInput = this.ConfigureInput(inputElement, selectedTool);
-
     this.ConfigureInputType(type, inputElement, selectedTool);
-    
-    this.BindInputElementWithValue(inputElement, type); //bind the type with user Event
-    this.renderer2.addClass(newParent, "mb-3");
-    let parentDiv = this.AddLabelAndInputElementInNewDiv(newParent, newLabel, newInput);
-    return parentDiv;
+    this.BindInputElementWithValue(inputElement, type, selectedTool); //bind the type with user Event
+    this.renderer2.addClass(newParentDiv, "mb-3");
+    let newElementDiv = this.AddLabelAndInputElementInNewDiv(newParentDiv, newLabel, newInput);
+    return newElementDiv;
   }
 
   ConfigureLabel(label: string, selectedTool: string) {
@@ -139,8 +141,26 @@ export class TestComponent implements OnInit, AfterViewInit {
     // Configure input
     this.renderer2.setAttribute(inputElement, 'id', selectedTool);
     this.renderer2.setAttribute(inputElement, 'name', selectedTool);
-    this.renderer2.setAttribute(inputElement, 'placeholder', `Enter ${selectedTool}`);
+    if (selectedTool === this.Tools.title) {
+      this.renderer2.setAttribute(inputElement, 'placeholder', `eg. Why Everyone Should Learn Programming`);
+    }
+    if (selectedTool === this.Tools.heading) {
+      this.renderer2.setAttribute(inputElement, 'placeholder', `eg. Top Reasons to Start Your Programming Journey Today`);
+    }
+    if (selectedTool === this.Tools.metaTitle) {
+      this.renderer2.setAttribute(inputElement, 'placeholder', `eg. Benefits of Learning Programming - Unlock Your Potential`);
+    }
+    if (selectedTool === this.Tools.metaDescription) {
+      this.renderer2.setAttribute(inputElement, 'placeholder', `eg. Discover how learning programming can boost your career, enhance problem-solving skills, and unlock endless opportunities in the tech world.`);
+    }
+    if (selectedTool === this.Tools.slug) {
+      this.renderer2.setAttribute(inputElement, 'placeholder', `eg. why-learn-programming`);
+    }
+
     this.renderer2.addClass(inputElement, 'form-control');
+    if (selectedTool === this.Tools.coverPhoto || selectedTool === this.Tools.contentPhoto || selectedTool === this.Tools.contentVideo) {
+      this.renderer2.addClass(inputElement, 'w-50');
+    }
     return inputElement
   }
 
@@ -163,18 +183,33 @@ export class TestComponent implements OnInit, AfterViewInit {
     return parentDiv;
   }
 
-  BindInputElementWithValue(inputElement: HTMLInputElement, type: string) {
+  BindInputElementWithValue(inputElement: HTMLInputElement, type: string, selectedTool: string) {
+    this.serial++;
+    let eventName = 'input';
     if (type === 'file') {
-      this.renderer2.listen(inputElement, 'input', (event: Event) => {
+      this.renderer2.listen(inputElement, eventName, (event: Event) => {
         const files = (event.target as HTMLInputElement).files;
-        if (files) {
-          this.newBlog.files = Array.from(files);
+        if (files && files.length > 0) {
+          const newFileContainer = Array.from(files).map(file => ({
+            selectedTool: selectedTool,
+            serial: this.serial,
+            file: file,
+          }));
+
+          this.newBlog.fileContainer.push(...newFileContainer); // Push all files 
         }
       })
     }
     else {
-      this.renderer2.listen(inputElement, 'input', (event: Event) => {
-        this.newBlog[inputElement.id] = (event?.target as HTMLInputElement)?.value;
+      this.renderer2.listen(inputElement, eventName, (event: Event) => {
+
+        let contentValue = (event?.target as HTMLInputElement)?.value;
+        let newContentContainer = {
+          selectedTool: selectedTool,
+          serial: this.serial,
+          blogContent: contentValue
+        }
+        this.newBlog.contentContainer.push(newContentContainer);
       })
     }
   }
