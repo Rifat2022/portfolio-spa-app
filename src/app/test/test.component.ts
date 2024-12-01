@@ -3,6 +3,17 @@ import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 
+export class InputType {
+  text: string;
+  textarea: string;
+  file: string;
+  constructor(text: string, textarea: string, file: string) {
+    this.text = text;
+    this.textarea = textarea;
+    this.file = file;
+  }
+}
+
 @Component({
   selector: 'app-test',
   standalone: true,
@@ -17,13 +28,27 @@ export class TestComponent implements OnInit, AfterViewInit {
   @Output() public onUploadFinished = new EventEmitter();
   @ViewChild('dynamicContainer', { read: ViewContainerRef }) container!: ViewContainerRef;
   @ViewChild('warning', { read: ViewContainerRef }) warningContainer!: ViewContainerRef;
+  // "title", "slug", "meta-title", "meta-description", "blog-video"
   uniqueProperties: string[] = [];
   blogForm!: FormGroup;
   isEditMode: boolean = false;
   progress: number = 0;
   message: string = '';
+  tools: any = {
+    title: 'title', 
+    blogPhoto: 'blog-photo', 
+    heading: 'heading', 
+    slug: 'slug', 
+    metaTitle: 'meta-title', 
+    metaDescription: 'meta-description', 
+    blogContent: 'blog-content', 
+    blogVideo: 'blog-video', 
+  }
 
-  newBlog!: any;
+  newBlog: any = {
+    files: [],
+    content: [] as string[],
+  };
   /**
    * Constructor
    */
@@ -38,14 +63,46 @@ export class TestComponent implements OnInit, AfterViewInit {
 
   }
 
-  FetchInputType(selectedtool: string): string {
+  CreateBlogElementsBySelectedTool(element: HTMLElement) {
+    const selectedTool = element?.id;
+    if(!this.IsValidateBlogElement(selectedTool)) {
+      return; 
+    }
+    if (!this.uniqueProperties.includes(selectedTool)) {
+      this.uniqueProperties.push(selectedTool);
+    }
+    let inputType: string = this.GetInputType(selectedTool);
+
+    let newlyCreatedParentDiv = this.CreateElements(inputType, selectedTool)
+    // loads into DOM
+    if(selectedTool === this.tools.blogContent) {
+      let newlyCreatedPhotoElement = this.CreateBlogsChildElement(this.tools.blogPhoto)
+      this.renderer2.appendChild(newlyCreatedParentDiv, newlyCreatedPhotoElement); 
+    }
+    this.renderer2.appendChild(this.container.element.nativeElement, newlyCreatedParentDiv);
+  }
+
+  CreateBlogsChildElement(contentType: string) {
+    let inputType: string = this.GetInputType(contentType);
+    let newlyCreatedParentDiv = this.CreateElements(inputType, contentType)
+    return newlyCreatedParentDiv; 
+  }
+
+  IsValidateBlogElement(tool:string) :boolean{
+    if (!tool || this.uniqueProperties.includes(tool)) {
+      this.CreateWarning(`Multiple ${tool} not alowed!`);
+      return false
+    }
+    return true; 
+  }
+  GetInputType(selectedtool: string): string {
     if (['title', 'heading', 'slug', 'meta-title', 'meta-description'].includes(selectedtool)) {
       return 'text';
     }
     else if (selectedtool === 'blog-content') {
       return 'textarea';
     }
-    else if (['blog-photo', 'blog-video'].includes(selectedtool)) {
+    else if (['blog-photo', 'blog-video', 'content-photo'].includes(selectedtool)) {
       return 'file';
     }
     else {
@@ -53,57 +110,57 @@ export class TestComponent implements OnInit, AfterViewInit {
     }
   }
 
-  CreateInputsBySelectedTool(element: HTMLElement | Event | any) {
-    const selectedTool = element?.id;
-    if (!selectedTool || this.uniqueProperties.includes(selectedTool)) {
-      this.CreateWarning(`Multiple ${selectedTool} not alowed!`);
-      return; 
-    }
-    this.uniqueProperties.push(selectedTool);
-    
-
-    let type: string = this.FetchInputType(selectedTool);
-    if (!type) return;
-
-    //Create a parent div, label & an input element type
-    const div = this.renderer2.createElement('div');
+  CreateElements(type: string, selectedTool: string) {
+    const newParent = this.renderer2.createElement('div');
     const label = this.renderer2.createElement('label');
     const inputElement = (type === 'textarea') ? this.renderer2.createElement('textarea') : this.renderer2.createElement('input');
 
+    let newLabel = this.ConfigureLabel(label, selectedTool);
+    let newInput = this.ConfigureInput(inputElement, selectedTool);
+
+    this.ConfigureInputType(type, inputElement, selectedTool);
+    
+    this.BindInputElementWithValue(inputElement, type); //bind the type with user Event
+    this.renderer2.addClass(newParent, "mb-3");
+    let parentDiv = this.AddLabelAndInputElementInNewDiv(newParent, newLabel, newInput);
+    return parentDiv;
+  }
+
+  ConfigureLabel(label: string, selectedTool: string) {
     // Configure label
     this.renderer2.setAttribute(label, 'for', selectedTool);
     this.renderer2.appendChild(label, this.renderer2.createText(selectedTool.toUpperCase()));
     this.renderer2.addClass(label, "mb-2") // add bootstrap class to label
     this.renderer2.addClass(label, "fw-bold") // add bootstrap class to label
+    return label;
+  }
 
-
+  ConfigureInput(inputElement: string, selectedTool: string) {
     // Configure input
     this.renderer2.setAttribute(inputElement, 'id', selectedTool);
     this.renderer2.setAttribute(inputElement, 'name', selectedTool);
     this.renderer2.setAttribute(inputElement, 'placeholder', `Enter ${selectedTool}`);
     this.renderer2.addClass(inputElement, 'form-control');
+    return inputElement
+  }
 
-    if (type == 'textarea') {
+  ConfigureInputType(type: string, inputElement: any, selectedTool: string) {
+    if (type === 'textarea') {
       this.renderer2.setAttribute(inputElement, 'rows', '10');
     }
     else if (type === 'file') {
       this.renderer2.setAttribute(inputElement, 'type', 'file');
       this.renderer2.setAttribute(inputElement, 'accept', selectedTool == 'blog-photo' ? 'image/*' : 'video/*');
     }
-    else {
+    else if (type === "text") {
       this.renderer2.setAttribute(inputElement, 'type', type);
     }
-    //bind the type with data
-    this.BindInputElementWithValue(inputElement, type);
+  }
 
-    //Set margin at the bottom of the div
-    this.renderer2.addClass(div, "mb-3")
-    // Append children
-    this.renderer2.appendChild(div, label);
-    this.renderer2.appendChild(div, inputElement)
-    // Append div to the dynamic container
-    const containerElement = this.container.element.nativeElement;
-    this.renderer2.appendChild(containerElement, div);
+  AddLabelAndInputElementInNewDiv(parentDiv: any, labelElement: any, inputElement: any) {
+    this.renderer2.appendChild(parentDiv, labelElement);
+    this.renderer2.appendChild(parentDiv, inputElement)
+    return parentDiv;
   }
 
   BindInputElementWithValue(inputElement: HTMLInputElement, type: string) {
@@ -132,12 +189,12 @@ export class TestComponent implements OnInit, AfterViewInit {
     this.renderer2.setStyle(paragraph, 'color', 'red'); // Set CSS color style
     this.renderer2.setStyle(paragraph, 'margin', '0'); // Optional: Adjust styling for spacing
     // this.renderer2.addClass(paragraph, "opacity-25"); // Optional: Adjust styling for spacing
-  
+
     // Create a text node with the message
-    const textNode = this.renderer2.createText(msg);  
+    const textNode = this.renderer2.createText(msg);
     // Append the text node to the paragraph
     this.renderer2.appendChild(paragraph, textNode);
-  
+
     // Find the warning container and append the paragraph
     const warnDiv = this.warningContainer?.element?.nativeElement;
     if (warnDiv) {
@@ -148,8 +205,8 @@ export class TestComponent implements OnInit, AfterViewInit {
           this.renderer2.removeChild(warnDiv, paragraph);
         }
       }, 3000);
-    } 
+    }
   }
-  
+
 
 }
