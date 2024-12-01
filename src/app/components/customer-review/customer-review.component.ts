@@ -35,7 +35,13 @@ export class CustomerReviewComponent {
         })
       },
       error: (err: any) => {
-        this.toastrService.error(err.message, "Getting Customer Review")
+        this.toastrService.error(err.message, "Getting Customer Review",
+          {
+            timeOut: 2000, // Set auto-dismiss timeout in milliseconds
+            closeButton: true, // Optionally add a close button
+            progressBar: true, // Optionally show a progress bar
+          }
+        )
       },
       complete: () => { }
     })

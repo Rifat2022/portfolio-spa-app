@@ -9,10 +9,6 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes), 
     provideClientHydration(), 
     provideHttpClient(withFetch()), 
-    provideToastr({
-      timeOut: 2000,
-      positionClass: 'toast-bottom-right',
-      preventDuplicates: true,
-    }), 
+    provideToastr(), 
   ]
 };

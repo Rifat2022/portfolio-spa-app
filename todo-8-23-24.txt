@@ -4,3 +4,30 @@ quote
 bootstrap_icon_code
 service_name
 description
+--------------
+2. Database Design for Blog Content
+Here’s a sample schema for storing blogs in a relational database:
+
+Table: Blogs
+Field Name	Data Type	Description
+id	INT (Primary Key)	Unique identifier for the blog.
+title	VARCHAR	Blog title.
+slug	VARCHAR	SEO-friendly URL string.
+content	TEXT	Blog content (HTML or Markdown).
+meta_title	VARCHAR	SEO meta title.
+meta_description	TEXT	SEO meta description.
+author_id	INT (Foreign Key)	Author of the blog.
+created_at	DATETIME	Blog creation date.
+updated_at	DATETIME	Blog last update date.
+published_at	DATETIME	Blog publish date.
+status	ENUM (Draft/Published)	Current blog status.
+Table: BlogTags
+Field Name	Data Type	Description
+blog_id	INT (Foreign Key)	ID of the blog.
+tag	VARCHAR	Tag name.
+Table: Media
+Field Name	Data Type	Description
+id	INT (Primary Key)	Unique identifier for the media.
+blog_id	INT (Foreign Key)	ID of the blog.
+file_path	VARCHAR	Path to the media file.
+alt_text	VARCHAR	Alt text for accessibility and SEO.
