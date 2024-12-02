@@ -22,26 +22,32 @@
       <img [src]="filePreview" alt="Uploaded Image" class="rounded-circle" />
     </div>
   </div> -->
-
-  <div class="container-fluid m-3">
-    <h2 class="text-center fw-bold my-3">Write Your Blog</h2>
-    <hr>
-    <div class="row m-2 p-3">
-      <!-- Blog editor container -->
-      <div id="blog-input-container" class="col-10 position-relative">
-        <!-- warning message -->
+  <div class="container-fluid m-3 p-3">
+    <h2 class="text-start fw-bold ps-3">Write Your Blog</h2>
+    <div class="row mb-2">
+      <div class="col-10">
         <div class="d-flex justify-content-between align-items-center">
-          <h6 class="opacity-25">Select an item from tools</h6>
-          <div class="fw-bold" #warning></div>
+          <p class="opacity-25 fs-5 ps-3">Select an item from tools</p>
+          <!-- warning message -->
+          <div class="text-uppercase" #warning></div>
           <!-- Add button -->
-          <button class="btn btn-outline-primary" (click)="CreateBlog($event)">
-            <i class="bi bi-check-circle me-2"></i> <span>Add Form</span>
-          </button>
+          <div class="" id="formButtons">
+            <button class="btn btn-outline-danger" (click)="ResetBlog($event)">
+              <i class="bi bi-arrow-clockwise"></i>
+            </button>
+            <button class="btn btn-outline-primary" (click)="CreateBlog($event)">
+              <i class="bi bi-check-circle me-2"></i> <span>Create Blog</span>
+            </button>
+          </div>
         </div>
+      </div>
+    </div>
+    <div class="row p-3">
+      <!-- Blog editor container -->
+      <div id="blog-input-container" class="col-10">        
         <!-- Blog elements -->
         <div id="blog-editor" #dynamicContainer></div>
       </div>
-  
       <!-- editor Tools panel -->
       <div id="blog-tool" class="col-2 sticky-top">
         <div class="shadow-sm">
@@ -85,4 +91,3 @@
       </div>
     </div>
   </div>
-  

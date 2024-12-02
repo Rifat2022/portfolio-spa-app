@@ -30,6 +30,7 @@ export class TestComponent implements OnInit, AfterViewInit {
   @ViewChild('warning', { read: ViewContainerRef }) warningContainer!: ViewContainerRef;
   // "title", "slug", "meta-title", "meta-description", "blog-video"
   uniqueProperties: string[] = [];
+  assignedProperties: string[] = [];
   isEditMode: boolean = false;
   progress: number = 0;
   message: string = '';
@@ -46,10 +47,10 @@ export class TestComponent implements OnInit, AfterViewInit {
     contentVideo: 'content-video',
   }
 
-  InputType = {
-    textInput: ['title', 'heading', 'slug', 'meta-title', 'meta-description'],
-    textareaInput: ["blog-content"],
-    fileInput: ['cover-photo', 'content-photo', 'content-video']
+  InputType!: {
+    textInput: string [];
+    textareaInput: string[];
+    fileInput: string[];
   }
   newBlog!: {
     fileContainer: { selectedTool: string; serial: number; file: File }[];
@@ -66,6 +67,12 @@ export class TestComponent implements OnInit, AfterViewInit {
       fileContainer: [],
       contentContainer: [],
     };
+    this.uniqueProperties = ['title', 'heading', 'slug', 'meta-title', 'meta-description', 'cover-photo', 'content-video'];
+    this.InputType = {
+      textInput: ['title', 'heading', 'slug', 'meta-title', 'meta-description'],
+      textareaInput: ["blog-content"],
+      fileInput: ['cover-photo', 'content-photo', 'content-video']
+    }
   }
 
   ngAfterViewInit(): void {
@@ -74,14 +81,11 @@ export class TestComponent implements OnInit, AfterViewInit {
 
   CreateBlogElementsBySelectedTool(element: HTMLElement) {
     const selectedTool = element?.id;
-    if (!this.IsValidateBlogElement(selectedTool)) {
+    if (!this.IsValidBlogElement(selectedTool)) {
       return;
     }
-    if (!this.uniqueProperties.includes(selectedTool)) {
-      this.uniqueProperties.push(selectedTool);
-    }
-    let inputType: string = this.GetInputType(selectedTool);
 
+    let inputType: string = this.GetInputType(selectedTool);
     let newlyCreatedParentDiv = this.CreateElements(inputType, selectedTool)
     // loads into DOM
     this.renderer2.appendChild(this.container.element.nativeElement, newlyCreatedParentDiv);
@@ -93,12 +97,16 @@ export class TestComponent implements OnInit, AfterViewInit {
     return newlyCreatedParentDiv;
   }
 
-  IsValidateBlogElement(tool: string): boolean {
-    if (!tool || this.uniqueProperties.includes(tool)) {
-      this.CreateWarning(`Multiple ${tool} not alowed!`);
-      return false
+  IsValidBlogElement(selectedTool: string): boolean {
+
+    if (this.assignedProperties.includes(selectedTool)) {
+      this.CreateWarning(`Multiple ${selectedTool} is not allowed`)
+      return false;
+    }       
+    if(this.uniqueProperties.includes(selectedTool)){
+      this.assignedProperties.push(selectedTool); 
     }
-    return true;
+    return true; 
   }
   GetInputType(selectedtool: string): string {
     if (this.InputType.textInput.includes(selectedtool)) {
@@ -123,6 +131,7 @@ export class TestComponent implements OnInit, AfterViewInit {
     let newInput = this.ConfigureInput(inputElement, selectedTool);
     this.ConfigureInputType(type, inputElement, selectedTool);
     this.BindInputElementWithValue(inputElement, type, selectedTool); //bind the type with user Event
+
     this.renderer2.addClass(newParentDiv, "mb-3");
     let newElementDiv = this.AddLabelAndInputElementInNewDiv(newParentDiv, newLabel, newInput);
     return newElementDiv;
@@ -151,7 +160,7 @@ export class TestComponent implements OnInit, AfterViewInit {
       this.renderer2.setAttribute(inputElement, 'placeholder', `eg. Benefits of Learning Programming - Unlock Your Potential`);
     }
     if (selectedTool === this.Tools.metaDescription) {
-      this.renderer2.setAttribute(inputElement, 'placeholder', `eg. Discover how learning programming can boost your career, enhance problem-solving skills, and unlock endless opportunities in the tech world.`);
+      this.renderer2.setAttribute(inputElement, 'placeholder', `Enter comma( , ) separated description. E.g programming can boost your career, enhance problem-solving skills`);
     }
     if (selectedTool === this.Tools.slug) {
       this.renderer2.setAttribute(inputElement, 'placeholder', `eg. why-learn-programming`);
@@ -170,7 +179,7 @@ export class TestComponent implements OnInit, AfterViewInit {
     }
     else if (type === 'file') {
       this.renderer2.setAttribute(inputElement, 'type', 'file');
-      this.renderer2.setAttribute(inputElement, 'accept', selectedTool == 'blog-photo' ? 'image/*' : 'video/*');
+      this.renderer2.setAttribute(inputElement, 'accept', (selectedTool == 'cover-photo') || (selectedTool == 'content-photo') ? 'image/*' : 'video/*');
     }
     else if (type === "text") {
       this.renderer2.setAttribute(inputElement, 'type', type);
@@ -184,10 +193,10 @@ export class TestComponent implements OnInit, AfterViewInit {
   }
 
   BindInputElementWithValue(inputElement: HTMLInputElement, type: string, selectedTool: string) {
-    this.serial++;
-    let eventName = 'input';
+    
+    
     if (type === 'file') {
-      this.renderer2.listen(inputElement, eventName, (event: Event) => {
+      this.renderer2.listen(inputElement, "change", (event: Event) => {
         const files = (event.target as HTMLInputElement).files;
         if (files && files.length > 0) {
           const newFileContainer = Array.from(files).map(file => ({
@@ -195,20 +204,20 @@ export class TestComponent implements OnInit, AfterViewInit {
             serial: this.serial,
             file: file,
           }));
-
+          this.serial++;
           this.newBlog.fileContainer.push(...newFileContainer); // Push all files 
         }
       })
     }
     else {
-      this.renderer2.listen(inputElement, eventName, (event: Event) => {
-
+      this.renderer2.listen(inputElement, "blur", (event: Event) => {
         let contentValue = (event?.target as HTMLInputElement)?.value;
         let newContentContainer = {
           selectedTool: selectedTool,
           serial: this.serial,
           blogContent: contentValue
         }
+        this.serial++;
         this.newBlog.contentContainer.push(newContentContainer);
       })
     }
@@ -241,6 +250,12 @@ export class TestComponent implements OnInit, AfterViewInit {
         }
       }, 3000);
     }
+  }
+  ResetBlog($event: any){
+    this.newBlog = {
+      fileContainer: [],
+      contentContainer: [],
+    };
   }
 
 
