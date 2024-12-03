@@ -1,10 +1,5 @@
-export interface FileDetails {
-    fileDetailsId?: number | undefined;
-    fileName: string;
-    contentType: string;
-    path?: string;
-    data?: any; 
-  }
+import { FileDetails } from "../../Shared/models/FileDetails.model";
+
   
   export interface CustomerReview {
     id: number | undefined;

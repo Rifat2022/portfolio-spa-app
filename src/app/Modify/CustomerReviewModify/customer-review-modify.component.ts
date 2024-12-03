@@ -1,10 +1,11 @@
-import { CustomerReview, FileDetails } from '../../components/customer-review/customer-review.model';
+import { CustomerReview} from '../../components/customer-review/customer-review.model';
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { CustomerReviewService } from '../../components/customer-review/customer-review.service';
 import { FileService } from '../../Shared/Services/file.service';
+import { FileDetails } from '../../Shared/models/FileDetails.model';
 
 
 @Component({

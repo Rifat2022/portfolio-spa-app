@@ -27,6 +27,13 @@ export const routes: Routes = [
                     import('./Modify/OfferedServicesModify/offered-services-modify.component').then(m =>
                         m.OfferedServicesModifyComponent
                     )
+            },
+            {
+                path: 'blog',
+                loadComponent: () =>
+                    import('./Modify/BlogModify/blog-modify.component').then(m =>
+                        m.BlogModifyComponent
+                    )
             }
         ]
     },

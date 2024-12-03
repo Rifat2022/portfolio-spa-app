@@ -24,3 +24,19 @@
   .circular_image img{
     width:100%;
   }
+
+  #container-id{
+    box-sizing: border-box;
+    padding: 0px;
+    margin: 0px;
+  }
+  #id{
+    width:300px;
+    background-color: yellow;
+  }
+  #navs{
+    background-color: red;
+  }
+  #icon{
+    background-color: blue;
+  }
