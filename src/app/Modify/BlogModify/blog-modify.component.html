@@ -1,61 +1,61 @@
 <div class="container-fluid p-3">
-    <h2 class="text-center">Create new blog</h2>
-    <div class="row m-3">
-      <!-- Blog editor container -->
-      <div id="blog-input-container" class="col-10">
-        <div class="d-flex justify-content-between align-items-center">
-          <h6 class="opacity-75">Select an item from tools</h6>
-          <!-- warning message -->
-          <div class="text-uppercase" #warning></div>
-          <!-- buttons -->
-          <div class="" id="formButtons">
-            <button class="btn btn-outline-danger" (click)="ResetBlog($event)">
-              <i class="bi bi-arrow-clockwise"></i>
-            </button>
-            <button class="btn btn-outline-primary" (click)="CreateBlog($event)">
-              <i class="bi bi-check-circle me-2"></i> <span>Create Blog</span>
-            </button>
-          </div>
+  <h2 class="text-center">Create new blog</h2>
+  <div class="row m-3">
+    <!-- Blog editor container -->
+    <div id="blog-input-container" class="col-10">
+      <div class="d-flex justify-content-between align-items-center">
+        <h6 class="opacity-75">Select an item from tools</h6>
+        <!-- warning message -->
+        <div class="text-uppercase" #warning></div>
+        <!-- buttons -->
+        <div class="" id="formButtons">
+          <button class="btn btn-outline-danger" (click)="ResetBlog($event)">
+            <i class="bi bi-arrow-clockwise"></i>
+          </button>
+          <button class="btn btn-outline-primary" (click)="CreateBlog($event)">
+            <i class="bi bi-check-circle me-2"></i> <span>Create Blog</span>
+          </button>
         </div>
-        <!-- Blog elements -->
-        <div id="blog-editor" #dynamicContainer></div>
       </div>
-      <!-- editor Tools panel -->
-      <div id="blog-tool" class="col-2">
-        <div class="shadow-sm">
-          <div id="title" role="button" #titleDiv class="p-3 cursor-pointer shadow-sm"
-            (click)="CreateBlogElementsBySelectedTool(titleDiv)">
-            <i class="bi bi-pencil me-2"></i> Title
-          </div>
-          <div id="cover-photo" role="button" #coverPhotoDiv class="p-3 cursor-pointer shadow-sm"
-            (click)="CreateBlogElementsBySelectedTool(coverPhotoDiv)">
-            <i class="bi bi-file-earmark-image "></i> Cover Photo
-          </div>
-          <div id="heading" role="button" #headingDiv class="p-3 cursor-pointer shadow-sm"
-            (click)="CreateBlogElementsBySelectedTool(headingDiv)">
-            <i class="bi bi-file-earmark-text me-2"></i> Heading
-          </div>
-          <div id="meta-title" role="button" #metaTitleDiv class="p-3 cursor-pointer shadow-sm"
-            (click)="CreateBlogElementsBySelectedTool(metaTitleDiv)">
-            <i class="bi bi-card-heading me-2"></i> Meta Title
-          </div>
-          <div id="meta-description" role="button" #metaDescriptionDiv class="p-3 cursor-pointer shadow-sm"
-            (click)="CreateBlogElementsBySelectedTool(metaDescriptionDiv)">
-            <i class="bi bi-file-earmark-text me-2"></i> Meta Description
-          </div>
-          <div id="blog-content" role="button" #blogContentDiv class="p-3 cursor-pointer shadow-sm"
-            (click)="CreateBlogElementsBySelectedTool(blogContentDiv)">
-            <i class="bi bi-journal me-2"></i> Blog content
-          </div>
-          <div id="content-photo" role="button" #contentPhotoDiv class="p-3 cursor-pointer shadow-sm"
-            (click)="CreateBlogElementsBySelectedTool(contentPhotoDiv)">
-            <i class="bi bi-file-earmark-image "></i> Content Photo
-          </div>
-          <div id="content-video" role="button" #contenVideoDiv class="p-3 cursor-pointer shadow-sm"
-            (click)="CreateBlogElementsBySelectedTool(contenVideoDiv)">
-            <i class="bi bi-file-earmark-play "></i> Content Video
-          </div>
+      <!-- Blog elements -->
+      <div id="blog-editor" #dynamicContainer></div>
+    </div>
+    <!-- editor Tools panel -->
+    <div id="blog-tool" class="col-2">
+      <div class="shadow-sm">
+        <div id="title" role="button" #titleDiv class="p-3 cursor-pointer shadow-sm"
+          (click)="CreateBlogElementsBySelectedTool(titleDiv)">
+          <i class="bi bi-pencil me-2"></i> Title
+        </div>
+        <div id="cover-photo" role="button" #coverPhotoDiv class="p-3 cursor-pointer shadow-sm"
+          (click)="CreateBlogElementsBySelectedTool(coverPhotoDiv)">
+          <i class="bi bi-file-earmark-image "></i> Cover Photo
+        </div>
+        <div id="heading" role="button" #headingDiv class="p-3 cursor-pointer shadow-sm"
+          (click)="CreateBlogElementsBySelectedTool(headingDiv)">
+          <i class="bi bi-file-earmark-text me-2"></i> Heading
+        </div>
+        <div id="meta-title" role="button" #metaTitleDiv class="p-3 cursor-pointer shadow-sm"
+          (click)="CreateBlogElementsBySelectedTool(metaTitleDiv)">
+          <i class="fa-brands fa-meta fa-lg me-2"></i>Meta Title
+        </div>
+        <div id="meta-description" role="button" #metaDescriptionDiv class="p-3 cursor-pointer shadow-sm"
+          (click)="CreateBlogElementsBySelectedTool(metaDescriptionDiv)">
+          <i class="bi bi-file-earmark-text me-2"></i> Meta Description
+        </div>
+        <div id="blog-content" role="button" #blogContentDiv class="p-3 cursor-pointer shadow-sm"
+          (click)="CreateBlogElementsBySelectedTool(blogContentDiv)">
+          <i class="fa-solid fa-blog fa-lg me-2"></i> Blog content
+        </div>
+        <div id="content-photo" role="button" #contentPhotoDiv class="p-3 cursor-pointer shadow-sm"
+          (click)="CreateBlogElementsBySelectedTool(contentPhotoDiv)">
+          <i class="bi bi-file-earmark-image "></i> Content Photo
+        </div>
+        <div id="content-video" role="button" #contenVideoDiv class="p-3 cursor-pointer shadow-sm"
+          (click)="CreateBlogElementsBySelectedTool(contenVideoDiv)">
+          <i class="fa-solid fa-video fa-lg me-2"></i> Content Video
         </div>
       </div>
     </div>
   </div>
+</div>

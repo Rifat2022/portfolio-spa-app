@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Output, Renderer2, ViewChild, ViewContainerRef } from '@angular/core';
 import { FileDetails } from '../../Shared/models/FileDetails.model';
 import { Blog } from '../../components/blog/blog.model';
+import { FileService } from '../../Shared/Services/file.service';
 
 @Component({
   selector: 'app-blog-modify',
@@ -21,7 +22,7 @@ export class BlogModifyComponent {
   message: string = '';
   serial = 0;
 
-  blogs!:Blog[];
+  blogs!: Blog[];
 
   blogTools: any = {
     title: 'title',
@@ -36,44 +37,44 @@ export class BlogModifyComponent {
   }
 
   InputTypeId!: {
-    textInput: string [];
+    textInput: string[];
     textareaInput: string[];
     fileInput: string[];
   }
 
   newBlog!: {
-    blogId:any,
-    title?:string; 
-    coverPhoto ?: File | null; 
-    heading?: string; 
-    slug?: string; 
-    metaTitle?: string; 
-    metaDescription?: string[]; 
-    blogContent: { id:string; serial: number; content: string } [];
-    contentPhotos: {  serial: number; file: File |null } [];
-    contentVideo?: File |null;
+    blogId: any,
+    title?: string;
+    coverPhoto?: File | null;
+    heading?: string;
+    slug?: string;
+    metaTitle?: string;
+    metaDescription?: string[];
+    blogContent: { id: string; serial: number; content: string }[];
+    contentPhotos: { id: string; serial: number; file: File | null }[];
+    contentVideo?: File | null;
   };
   /**
    * Constructor
    */
-  constructor(private renderer2: Renderer2) {
-  
+  constructor(private renderer2: Renderer2, private fileService: FileService) {
+
   }
 
   ngOnInit(): void {
-    var me = this; 
+    var me = this;
     me.newBlog = {
-      blogId: null, 
-      title: '', 
-      coverPhoto: null, 
-      heading: '', 
-      metaTitle: '', 
-      metaDescription: [], 
+      blogId: null,
+      title: '',
+      coverPhoto: null,
+      heading: '',
+      metaTitle: '',
+      metaDescription: [],
       blogContent: [],
       contentPhotos: [],
       contentVideo: null
     };
-    me.uniqueProperties = ['title', 'heading', 'meta-title', 'meta-description', 
+    me.uniqueProperties = ['title', 'heading', 'meta-title', 'meta-description',
       'cover-photo', 'content-video'];
     me.InputTypeId = {
       textInput: ['title', 'heading', 'meta-title', 'meta-description'],
@@ -82,12 +83,12 @@ export class BlogModifyComponent {
     }
   }
 
-  ngAfterViewInit(): void {
+  protected ngAfterViewInit(): void {
 
   }
 
-  CreateBlogElementsBySelectedTool(element: HTMLElement) {
-    var me = this; 
+  protected CreateBlogElementsBySelectedTool(element: HTMLElement) {
+    var me = this;
     const selectedTool = element?.id;
     if (!me.IsValidBlogElement(selectedTool)) {
       return;
@@ -105,16 +106,17 @@ export class BlogModifyComponent {
   // }
 
   IsValidBlogElement(selectedTool: string): boolean {
-    var me = this; 
+    var me = this;
     if (me.assignedProperties.includes(selectedTool)) {
       me.CreateWarning(`Multiple ${selectedTool} is not allowed`)
       return false;
-    }       
-    if(me.uniqueProperties.includes(selectedTool)){
-      me.assignedProperties.push(selectedTool); 
     }
-    return true; 
+    if (me.uniqueProperties.includes(selectedTool)) {
+      me.assignedProperties.push(selectedTool);
+    }
+    return true;
   }
+
   GetInputType(selectedtool: string): string {
     if (this.InputTypeId.textInput.includes(selectedtool)) {
       return 'text';
@@ -131,12 +133,12 @@ export class BlogModifyComponent {
   }
 
   CreateElements(type: string, toolsItem: string) {
-    var me = this; 
+    var me = this;
     const newParentDiv = me.renderer2.createElement('div');
     const label = me.renderer2.createElement('label');
     const createdType = (type === 'textarea') ? me.renderer2.createElement('textarea') : me.renderer2.createElement('input');
     let newLabel = me.ConfigureLabel(label, toolsItem);
-    let newInputElement = me.ConfigureInput(createdType, toolsItem);    
+    let newInputElement = me.ConfigureInput(createdType, toolsItem);
     // me.ConfigureModel(toolsItem)
     me.ConfigureInputType(type, createdType, toolsItem);
     me.BindInputElementWithValue(createdType, type, toolsItem); //bind Event
@@ -165,7 +167,7 @@ export class BlogModifyComponent {
 
   ConfigureInput(inputElement: string, selectedTool: string) {
     // Configure input
-    var me = this; 
+    var me = this;
     me.renderer2.setAttribute(inputElement, 'id', `selectedTool-${Date.now()}`);
     me.renderer2.setAttribute(inputElement, 'name', selectedTool);
     if (selectedTool === me.blogTools.title) {
@@ -188,7 +190,7 @@ export class BlogModifyComponent {
   }
 
   ConfigureInputType(type: string, inputElement: any, selectedTool: string) {
-    var me = this; 
+    var me = this;
     if (type === 'textarea') {
       me.renderer2.setAttribute(inputElement, 'rows', '10');
     }
@@ -207,55 +209,77 @@ export class BlogModifyComponent {
     return parentDiv;
   }
 
-  BindInputElementWithValue(inputElement: HTMLInputElement, type: string, toolsItem: string) {    
+  BindInputElementWithValue(inputElement: HTMLInputElement, type: string, toolsItem: string) {
     // file type has cover-photo, content-photo, content-video
     if (type === 'file') {
-      this.renderer2.listen( inputElement, "change", (event: Event) => {
+      this.renderer2.listen(inputElement, "change", (event: Event) => {
+        let id = (event.target as HTMLInputElement).id;
         const files = (event.target as HTMLInputElement).files;
-        if (files && files.length > 0) {          
-          this.AddFileToNewBlog(toolsItem, files); 
+        if (files && files.length > 0) {
+          this.UpdateContentsPhotoValue(toolsItem, files, id);
         }
       })
     }
     else {
       // text & textarea type has title, heading, meta title, meta description , blog content, 
       this.renderer2.listen(inputElement, "blur", (event: Event) => {
-        let contentValue = (event?.target as HTMLInputElement)?.value;        
-        this.AddTextToNewBlog(toolsItem, contentValue)
+        let id = (event.target as HTMLInputElement).id;
+        let updatedValue = (event?.target as HTMLInputElement)?.value;
+        this.UpdateBlogContentsTextValue(toolsItem, updatedValue, id)
       })
     }
   }
-  AddFileToNewBlog(toolsItem:string, files:any){
-    if(toolsItem === this.blogTools.coverPhoto){
-      this.newBlog.coverPhoto = files[0];        
+
+  UpdateContentsPhotoValue(toolsItem: string, files: any, id: string) {
+    if (toolsItem === this.blogTools.coverPhoto) {
+      this.newBlog.coverPhoto = files[0]; //single file
     }
-    else if(toolsItem === this.blogTools.contentPhoto){ // interested on this one
-      const newContentPhoto = {serial : this.serial, file: files[0]}
-      this.newBlog.contentPhotos.push(newContentPhoto)
+    else if (toolsItem === this.blogTools.contentPhoto) {
+      let contentPhoto = this.newBlog.contentPhotos.find(fileContent => fileContent.id === id);
+      if (contentPhoto) {
+        contentPhoto.file = files[0];
+      }
+      else {
+        let content = {
+          id: id,
+          serial: this.serial++,
+          file: files[0]
+        }
+        this.newBlog.contentPhotos.push(content);
+      }
     }
-    else if(toolsItem === this.blogTools.contentVideo){
-      this.newBlog.contentVideo = files[0];        
+    else if (toolsItem === this.blogTools.contentVideo) {
+      this.newBlog.contentVideo = files[0];
     }
   }
 
-  AddTextToNewBlog(toolsItem:string, contentValue:string){
-    if(toolsItem === this.blogTools.title){
-      this.newBlog.title = contentValue     
+  UpdateBlogContentsTextValue(toolsItem: string, contentValue: string, id: string) {
+    if (toolsItem === this.blogTools.title) {
+      this.newBlog.title = contentValue
     }
-    else if(toolsItem === this.blogTools.heading){
+    else if (toolsItem === this.blogTools.heading) {
       this.newBlog.heading = contentValue
     }
-    else if(toolsItem === this.blogTools.metaTitle){
+    else if (toolsItem === this.blogTools.metaTitle) {
       this.newBlog.heading = contentValue
     }
-    else if(toolsItem === this.blogTools.metaDescription){
-      let contentValueArr =  contentValue.split(",");
-      this.newBlog.metaDescription = {...contentValueArr};
+    else if (toolsItem === this.blogTools.metaDescription) {
+      let contentValueArr = contentValue.split(",");
+      this.newBlog.metaDescription = { ...contentValueArr };
     }
-    else if(toolsItem === this.blogTools.blogContent){ // interested on this one
-      // let id = this.newBlog.blogContent.filter(bc=>{ return bc.id === })
-      // const nbc = {id: , serial : this.serial, content: contentValue}
-      // this.newBlog.blogContent.push(nbc)
+    else if (toolsItem === this.blogTools.blogContent) { // interested on this one
+      let blogContent = this.newBlog.blogContent.find(blogContent => blogContent.id === id);
+
+      if (blogContent) {
+        blogContent.content = contentValue;
+      } else {
+        let content = {
+          id: id,
+          serial: this.serial++,
+          content: contentValue
+        }
+        this.newBlog.blogContent.push(content); 
+      }
     }
   }
   CreateBlog($event: Event) {
@@ -263,7 +287,7 @@ export class BlogModifyComponent {
   }
 
   CreateWarning(msg: string) {
-    var me = this; 
+    var me = this;
     // Create a paragraph element
     const paragraph = me.renderer2.createElement('p');
     me.renderer2.setStyle(paragraph, 'color', 'red'); // Set CSS color style
@@ -287,15 +311,15 @@ export class BlogModifyComponent {
       }, 3000);
     }
   }
-  ResetBlog($event: any){
-    var me = this; 
+  ResetBlog($event: any) {
+    var me = this;
     me.newBlog = {
-      blogId: null, 
-      title: '', 
-      coverPhoto: null, 
-      heading:'', 
-      metaTitle:'', 
-      metaDescription: [], 
+      blogId: null,
+      title: '',
+      coverPhoto: null,
+      heading: '',
+      metaTitle: '',
+      metaDescription: [],
       blogContent: [],
       contentPhotos: [],
       contentVideo: null

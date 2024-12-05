@@ -21,10 +21,12 @@ created_at	DATETIME	Blog creation date.
 updated_at	DATETIME	Blog last update date.
 published_at	DATETIME	Blog publish date.
 status	ENUM (Draft/Published)	Current blog status.
+
 Table: BlogTags
 Field Name	Data Type	Description
 blog_id	INT (Foreign Key)	ID of the blog.
 tag	VARCHAR	Tag name.
+
 Table: Media
 Field Name	Data Type	Description
 id	INT (Primary Key)	Unique identifier for the media.
