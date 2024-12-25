@@ -33,3 +33,5 @@ id	INT (Primary Key)	Unique identifier for the media.
 blog_id	INT (Foreign Key)	ID of the blog.
 file_path	VARCHAR	Path to the media file.
 alt_text	VARCHAR	Alt text for accessibility and SEO.
+
+

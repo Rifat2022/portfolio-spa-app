@@ -1,20 +1,26 @@
 import { FileDetails } from "../../Shared/models/FileDetails.model";
 
-export interface Blog {
-    blogId:any; 
+export interface    Blog {
+    id:any; 
     title:string; 
-    coverPhoto: FileDetails; 
+    authorName:string;
     heading: string; 
     slug: string; 
     metaTitle: string; 
     metaDescription: string[]; 
-    blogContent: { serial: number; content: string } []; 
-    contentPhotos?: {  serial: number; file: File } [];
-    contentVideo?: FileDetails;
-
-    creationTime?: string; 
-    editTime?: string; 
-    publishTime?:string; 
+    createdAt?: string;
+    coverPhoto?: FileDetails;
+    blogContents?: { 
+        serial: number; 
+        content: string; 
+        uniqueId: string 
+    } [];
+    contentPhotos?: {  
+        serialNo: number; 
+        uniqueId:string; 
+        file?: FileDetails 
+    } [];
+    blogVideo?: FileDetails;
 }
 
 export interface BlogCategory {

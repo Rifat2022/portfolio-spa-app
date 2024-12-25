@@ -1,12 +1,12 @@
 import { Component, EventEmitter, Output, Renderer2, ViewChild, ViewContainerRef } from '@angular/core';
-import { FileDetails } from '../../Shared/models/FileDetails.model';
 import { Blog } from '../../components/blog/blog.model';
 import { FileService } from '../../Shared/Services/file.service';
-
+import { BlogService } from '../../components/blog/blog.service';
+import { CommonModule } from '@angular/common';
 @Component({
   selector: 'app-blog-modify',
   standalone: true,
-  imports: [],
+  imports: [CommonModule],
   templateUrl: './blog-modify.component.html',
   styleUrl: './blog-modify.component.scss'
 })
@@ -21,9 +21,7 @@ export class BlogModifyComponent {
   progress: number = 0;
   message: string = '';
   serial = 0;
-
   blogs!: Blog[];
-
   blogTools: any = {
     title: 'title',
     coverPhoto: 'cover-photo',
@@ -31,48 +29,44 @@ export class BlogModifyComponent {
     slug: 'slug',
     metaTitle: 'meta-title',
     metaDescription: 'meta-description',
-    blogContent: 'blog-content',
-    contentPhoto: 'content-photo',
-    contentVideo: 'content-video',
+    blogContents: 'blog-contents',
+    contentPhotos: 'content-photos',
+    blogVideo: 'blog-video',
   }
-
   InputTypeId!: {
     textInput: string[];
     textareaInput: string[];
     fileInput: string[];
   }
-
   newBlog!: {
-    blogId: any,
+    blogId: number | undefined,
     title?: string;
-    coverPhoto?: File | null;
     heading?: string;
     slug?: string;
     metaTitle?: string;
-    metaDescription?: string[];
-    blogContent: { id: string; serial: number; content: string }[];
-    contentPhotos: { id: string; serial: number; file: File | null }[];
-    contentVideo?: File | null;
+    metaDescription?: string;
+    blogContents: { serialNo: number; uniqueId: string; content: string }[];
+    contentPhotos: { serialNo: number; uniqueId: string; file: File | null }[];
+    coverPhoto?: File | null;
+    blogVideo?: File | null;
   };
   /**
    * Constructor
    */
-  constructor(private renderer2: Renderer2, private fileService: FileService) {
-
+  constructor(private renderer2: Renderer2, private fileService: FileService, private blogService: BlogService) {
   }
-
   ngOnInit(): void {
     var me = this;
     me.newBlog = {
-      blogId: null,
+      blogId: undefined,
       title: '',
       coverPhoto: null,
       heading: '',
       metaTitle: '',
-      metaDescription: [],
-      blogContent: [],
+      metaDescription: '',
+      blogContents: [],
       contentPhotos: [],
-      contentVideo: null
+      blogVideo: null,
     };
     me.uniqueProperties = ['title', 'heading', 'meta-title', 'meta-description',
       'cover-photo', 'content-video'];
@@ -81,12 +75,33 @@ export class BlogModifyComponent {
       textareaInput: ["blog-content"],
       fileInput: ['cover-photo', 'content-photo', 'content-video']
     }
+    me.blogService.getBlogs().subscribe({
+      next: (blogs: Blog[]) => {
+        this.blogs = blogs.map((value: Blog) => ({
+          id: value.id,
+          title: value.title,
+          authorName: value.authorName,
+          heading: value.heading,
+          slug: value.slug,
+          metaTitle: value.metaTitle || '',
+          metaDescription: value.metaDescription || [],
+          createdAt: value.createdAt || undefined,
+          coverPhoto: value.coverPhoto || undefined,
+          blogContents: value.blogContents ? value.blogContents : [],
+          contentPhotos: value.contentPhotos ? value.contentPhotos : [],
+          contentVideo: value.blogVideo || undefined,
+        }));
+      },
+      error: (error) => {
+        console.error('Error fetching blogs:', error);
+      },
+      complete: () => {
+        console.log('Blog fetching completed.');
+      }
+    });
   }
-
   protected ngAfterViewInit(): void {
-
   }
-
   protected CreateBlogElementsBySelectedTool(element: HTMLElement) {
     var me = this;
     const selectedTool = element?.id;
@@ -98,13 +113,51 @@ export class BlogModifyComponent {
     // loads into DOM
     me.renderer2.appendChild(me.container.element.nativeElement, newlyCreatedParentDiv);
   }
-
   // CreateBlogsChildElement(contentType: string) {
   //   let inputType: string = this.GetInputType(contentType);
   //   let newlyCreatedParentDiv = this.CreateElements(inputType, contentType)
   //   return newlyCreatedParentDiv;
   // }
+  CreateBlog($event: Event) {
+    let createdFormData = this.CreateFormData();
+    this.blogService.createBlog(createdFormData).subscribe({
+      next: (data) => {
+        console.log();
+      }
+    })
+  }
 
+  CreateFormData() {
+    const formData = new FormData();
+    // Add primitive fields
+    // formData.append("blogId", this.newBlog.blogId);
+    var me = this;
+    if (me.newBlog.title) formData.append("title", me.newBlog.title);
+    if (me.newBlog.heading) formData.append("heading", me.newBlog.heading);
+    if (me.newBlog.slug) formData.append("slug", me.newBlog.slug);
+    if (me.newBlog.metaTitle) formData.append("metaTitle", me.newBlog.metaTitle);
+    if (me.newBlog.metaDescription) formData.append(`metaDescription`, me.newBlog.metaDescription)
+    // if (me.newBlog.serialIdentifier) formData.append(`serialIdentifier`, JSON.stringify(me.newBlog.serialIdentifier))
+    // Add blog content (array of objects)        
+    if (me.newBlog.blogContents) formData.append(`blogContents`, JSON.stringify(me.newBlog.blogContents));
+    // Add content photos (array of objects)
+    this.newBlog.contentPhotos.forEach((cp: any) => {
+      if (cp.file) {
+        // formData.append(`contentPhoto-${cp.ContentPhotoToolUniqueId}`, cp.file, cp.file.name);
+        var fileName = `${cp.file.name}%!%` + `${cp.serialNo}%!%` + `${cp.ContentPhotoToolUniqueId}`;
+        formData.append("contentPhotos", cp.file, fileName);
+      }
+    });
+    // Add files
+    if (me.newBlog.coverPhoto) {
+      formData.append("coverPhoto", me.newBlog.coverPhoto, me.newBlog.coverPhoto.name);
+    }
+    if (me.newBlog.blogVideo) {
+      formData.append("blogVideo", me.newBlog.blogVideo, me.newBlog.blogVideo.name);
+    }
+    // formData.append("serialIdentifier", JSON.stringify(this.newBlog.serialIdentifier)); 
+    return formData;
+  }
   IsValidBlogElement(selectedTool: string): boolean {
     var me = this;
     if (me.assignedProperties.includes(selectedTool)) {
@@ -116,7 +169,6 @@ export class BlogModifyComponent {
     }
     return true;
   }
-
   GetInputType(selectedtool: string): string {
     if (this.InputTypeId.textInput.includes(selectedtool)) {
       return 'text';
@@ -131,7 +183,6 @@ export class BlogModifyComponent {
       return '';
     }
   }
-
   CreateElements(type: string, toolsItem: string) {
     var me = this;
     const newParentDiv = me.renderer2.createElement('div');
@@ -146,16 +197,6 @@ export class BlogModifyComponent {
     let newElementDiv = me.AddLabelAndInputElementInNewDiv(newParentDiv, newLabel, newInputElement);
     return newElementDiv;
   }
-
-  // ConfigureModel(toolsItem:string) {
-  //   if(toolsItem == this.blogTools.blogContent) {
-  //     this.newBlog.blogContent.push({serial:this.serial++, content:''}); 
-  //   }
-  //   else if(toolsItem == this.blogTools.contentPhoto){
-  //     this.newBlog.contentPhotos.push({serial:this.serial++, file: null}); 
-  //   }
-  // }
-
   ConfigureLabel(label: string, selectedTool: string) {
     // Configure label
     this.renderer2.setAttribute(label, 'for', selectedTool);
@@ -164,11 +205,10 @@ export class BlogModifyComponent {
     this.renderer2.addClass(label, "fw-bold") // add bootstrap class to label
     return label;
   }
-
   ConfigureInput(inputElement: string, selectedTool: string) {
     // Configure input
     var me = this;
-    me.renderer2.setAttribute(inputElement, 'id', `selectedTool-${Date.now()}`);
+    me.renderer2.setAttribute(inputElement, 'id', `${selectedTool}-${Date.now()}`);
     me.renderer2.setAttribute(inputElement, 'name', selectedTool);
     if (selectedTool === me.blogTools.title) {
       me.renderer2.setAttribute(inputElement, 'placeholder', `eg. Why Everyone Should Learn Programming`);
@@ -188,7 +228,6 @@ export class BlogModifyComponent {
     }
     return inputElement
   }
-
   ConfigureInputType(type: string, inputElement: any, selectedTool: string) {
     var me = this;
     if (type === 'textarea') {
@@ -202,13 +241,11 @@ export class BlogModifyComponent {
       me.renderer2.setAttribute(inputElement, 'type', type);
     }
   }
-
   AddLabelAndInputElementInNewDiv(parentDiv: any, labelElement: any, inputElement: any) {
     this.renderer2.appendChild(parentDiv, labelElement);
     this.renderer2.appendChild(parentDiv, inputElement)
     return parentDiv;
   }
-
   BindInputElementWithValue(inputElement: HTMLInputElement, type: string, toolsItem: string) {
     // file type has cover-photo, content-photo, content-video
     if (type === 'file') {
@@ -234,22 +271,25 @@ export class BlogModifyComponent {
     if (toolsItem === this.blogTools.coverPhoto) {
       this.newBlog.coverPhoto = files[0]; //single file
     }
-    else if (toolsItem === this.blogTools.contentPhoto) {
-      let contentPhoto = this.newBlog.contentPhotos.find(fileContent => fileContent.id === id);
+    else if (toolsItem === this.blogTools.contentPhotos) {
+      let contentPhoto = this.newBlog.contentPhotos.find(fileContent => fileContent.uniqueId === id);
       if (contentPhoto) {
         contentPhoto.file = files[0];
       }
       else {
+        this.serial++;
         let content = {
-          id: id,
-          serial: this.serial++,
+          uniqueId: id,
+          serialNo: this.serial,
           file: files[0]
         }
+        // let attachSerial = {serial: this.serial++, uniqueId: id};
+        // this.newBlog.serialIdentifier.push(attachSerial);
         this.newBlog.contentPhotos.push(content);
       }
     }
-    else if (toolsItem === this.blogTools.contentVideo) {
-      this.newBlog.contentVideo = files[0];
+    else if (toolsItem === this.blogTools.blogVideo) {
+      this.newBlog.blogVideo = files[0];
     }
   }
 
@@ -261,31 +301,29 @@ export class BlogModifyComponent {
       this.newBlog.heading = contentValue
     }
     else if (toolsItem === this.blogTools.metaTitle) {
-      this.newBlog.heading = contentValue
+      this.newBlog.metaTitle = contentValue
     }
     else if (toolsItem === this.blogTools.metaDescription) {
-      let contentValueArr = contentValue.split(",");
-      this.newBlog.metaDescription = { ...contentValueArr };
+      this.newBlog.metaDescription = contentValue;
     }
-    else if (toolsItem === this.blogTools.blogContent) { // interested on this one
-      let blogContent = this.newBlog.blogContent.find(blogContent => blogContent.id === id);
-
-      if (blogContent) {
+    else if (toolsItem === this.blogTools.blogContents) { // interested on this one
+      let blogContent = this.newBlog.blogContents.find(blogContent => blogContent.uniqueId === id);
+      if (blogContent) { //inserts previously serialed serial
         blogContent.content = contentValue;
-      } else {
+      }
+      else {
+        this.serial++;
         let content = {
-          id: id,
-          serial: this.serial++,
+          uniqueId: id,
+          serialNo: this.serial,
           content: contentValue
         }
-        this.newBlog.blogContent.push(content); 
+        // let attachSerial = {serial: this.serial++, uniqueId: id};
+        // this.newBlog.serialIdentifier.push(attachSerial);
+        this.newBlog.blogContents.push(content);
       }
     }
   }
-  CreateBlog($event: Event) {
-    console.log(this.newBlog);
-  }
-
   CreateWarning(msg: string) {
     var me = this;
     // Create a paragraph element
@@ -293,12 +331,10 @@ export class BlogModifyComponent {
     me.renderer2.setStyle(paragraph, 'color', 'red'); // Set CSS color style
     me.renderer2.setStyle(paragraph, 'margin', '0'); // Optional: Adjust styling for spacing
     // me.renderer2.addClass(paragraph, "opacity-25"); // Optional: Adjust styling for spacing
-
     // Create a text node with the message
     const textNode = me.renderer2.createText(msg);
     // Append the text node to the paragraph
     me.renderer2.appendChild(paragraph, textNode);
-
     // Find the warning container and append the paragraph
     const warnDiv = me.warningContainer?.element?.nativeElement;
     if (warnDiv) {
@@ -314,15 +350,15 @@ export class BlogModifyComponent {
   ResetBlog($event: any) {
     var me = this;
     me.newBlog = {
-      blogId: null,
+      blogId: undefined,
       title: '',
       coverPhoto: null,
       heading: '',
       metaTitle: '',
-      metaDescription: [],
-      blogContent: [],
+      metaDescription: '',
+      blogContents: [],
       contentPhotos: [],
-      contentVideo: null
+      blogVideo: null,
     };
   }
 }

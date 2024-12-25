@@ -57,5 +57,51 @@
         </div>
       </div>
     </div>
+
+
+  </div>
+  <div class="row m-4">
+    <div class="">List of Blog</div>
+    <div class="col-12 p-3">
+      <table class="table table-bordered table-hover">
+        <thead class="table-dark">
+          <tr>
+            <th>Id</th>
+            <th>Blog Title</th>
+            <th>Author</th>
+            <th>Created At</th>
+            <th>Cover Photo</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let blog of blogs">
+            <td>{{blog?.id}}</td>
+            <td>{{blog?.title}}</td>
+            <td>{{blog?.authorName}}</td>
+            <td>{{blog?.createdAt}}</td>
+            <td>
+              <img class="w-50 h-50 circled_img" [src]="blog.coverPhoto?.path"
+                [alt]="(blog.coverPhoto) ? blog.coverPhoto.fileName : blog.title" />
+            </td>
+            <td>
+              <button class="btn btn-primary btn-sm">Edit</button>
+              <button class="btn btn-danger btn-sm">Delete</button>
+              <button class="btn btn-danger btn-sm">Preview</button>
+            </td>
+          </tr>
+          <!-- <tr>
+            <td>2</td>
+            <td>Jane Smith</td>
+            <td>jane.smith&#64;example.com</td>
+            <td>
+              <button class="btn btn-primary btn-sm">Edit</button>
+              <button class="btn btn-danger btn-sm">Delete</button>
+            </td>
+          </tr> -->
+        </tbody>
+      </table>
+    </div>
+
   </div>
 </div>

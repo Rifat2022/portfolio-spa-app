@@ -8,5 +8,10 @@ import { Component } from '@angular/core';
   styleUrl: './blog.component.scss'
 })
 export class BlogComponent {
-
+ 
+  
+  constructor() {
+    
+    
+  }
 }
