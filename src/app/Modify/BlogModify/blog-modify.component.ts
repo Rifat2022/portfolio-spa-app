@@ -3,6 +3,7 @@ import { Blog } from '../../components/blog/blog.model';
 import { FileService } from '../../Shared/Services/file.service';
 import { BlogService } from '../../components/blog/blog.service';
 import { CommonModule } from '@angular/common';
+import { METHODS } from 'node:http';
 @Component({
   selector: 'app-blog-modify',
   standalone: true,
@@ -29,8 +30,8 @@ export class BlogModifyComponent {
     slug: 'slug',
     metaTitle: 'meta-title',
     metaDescription: 'meta-description',
-    blogContents: 'blog-contents',
-    contentPhotos: 'content-photos',
+    blogContents: 'blog-content',
+    contentPhotos: 'content-photo',
     blogVideo: 'blog-video',
   }
   InputTypeId!: {
@@ -69,12 +70,19 @@ export class BlogModifyComponent {
       blogVideo: null,
     };
     me.uniqueProperties = ['title', 'heading', 'meta-title', 'meta-description',
-      'cover-photo', 'content-video'];
+      'cover-photo', 'blog-video'];
     me.InputTypeId = {
       textInput: ['title', 'heading', 'meta-title', 'meta-description'],
       textareaInput: ["blog-content"],
-      fileInput: ['cover-photo', 'content-photo', 'content-video']
+      fileInput: ['cover-photo', 'content-photo', 'blog-video']
     }
+    me.getAllBlogs(); 
+  }
+  protected ngAfterViewInit(): void {
+  }
+
+  getAllBlogs(){
+    var me =this; 
     me.blogService.getBlogs().subscribe({
       next: (blogs: Blog[]) => {
         this.blogs = blogs.map((value: Blog) => ({
@@ -100,8 +108,7 @@ export class BlogModifyComponent {
       }
     });
   }
-  protected ngAfterViewInit(): void {
-  }
+
   protected CreateBlogElementsBySelectedTool(element: HTMLElement) {
     var me = this;
     const selectedTool = element?.id;
@@ -113,16 +120,16 @@ export class BlogModifyComponent {
     // loads into DOM
     me.renderer2.appendChild(me.container.element.nativeElement, newlyCreatedParentDiv);
   }
-  // CreateBlogsChildElement(contentType: string) {
-  //   let inputType: string = this.GetInputType(contentType);
-  //   let newlyCreatedParentDiv = this.CreateElements(inputType, contentType)
-  //   return newlyCreatedParentDiv;
-  // }
+
+
   CreateBlog($event: Event) {
     let createdFormData = this.CreateFormData();
     this.blogService.createBlog(createdFormData).subscribe({
       next: (data) => {
-        console.log();
+        console.log(data);
+      }, 
+      error: (error: any)=> {
+        console.log(error)
       }
     })
   }
@@ -143,8 +150,8 @@ export class BlogModifyComponent {
     // Add content photos (array of objects)
     this.newBlog.contentPhotos.forEach((cp: any) => {
       if (cp.file) {
-        // formData.append(`contentPhoto-${cp.ContentPhotoToolUniqueId}`, cp.file, cp.file.name);
-        var fileName = `${cp.file.name}%!%` + `${cp.serialNo}%!%` + `${cp.ContentPhotoToolUniqueId}`;
+        // formData.append(`contentPhoto-${cp.UniqueId}`, cp.file, cp.file.name);
+        var fileName = `${cp.file.name}%!%` + `${cp.serialNo}%!%` + `${cp.uniqueId}`;
         formData.append("contentPhotos", cp.file, fileName);
       }
     });
@@ -158,6 +165,7 @@ export class BlogModifyComponent {
     // formData.append("serialIdentifier", JSON.stringify(this.newBlog.serialIdentifier)); 
     return formData;
   }
+
   IsValidBlogElement(selectedTool: string): boolean {
     var me = this;
     if (me.assignedProperties.includes(selectedTool)) {
@@ -169,6 +177,8 @@ export class BlogModifyComponent {
     }
     return true;
   }
+
+
   GetInputType(selectedtool: string): string {
     if (this.InputTypeId.textInput.includes(selectedtool)) {
       return 'text';
@@ -183,6 +193,8 @@ export class BlogModifyComponent {
       return '';
     }
   }
+
+
   CreateElements(type: string, toolsItem: string) {
     var me = this;
     const newParentDiv = me.renderer2.createElement('div');
@@ -197,6 +209,8 @@ export class BlogModifyComponent {
     let newElementDiv = me.AddLabelAndInputElementInNewDiv(newParentDiv, newLabel, newInputElement);
     return newElementDiv;
   }
+
+
   ConfigureLabel(label: string, selectedTool: string) {
     // Configure label
     this.renderer2.setAttribute(label, 'for', selectedTool);
@@ -228,6 +242,7 @@ export class BlogModifyComponent {
     }
     return inputElement
   }
+  
   ConfigureInputType(type: string, inputElement: any, selectedTool: string) {
     var me = this;
     if (type === 'textarea') {
@@ -246,8 +261,8 @@ export class BlogModifyComponent {
     this.renderer2.appendChild(parentDiv, inputElement)
     return parentDiv;
   }
+  
   BindInputElementWithValue(inputElement: HTMLInputElement, type: string, toolsItem: string) {
-    // file type has cover-photo, content-photo, content-video
     if (type === 'file') {
       this.renderer2.listen(inputElement, "change", (event: Event) => {
         let id = (event.target as HTMLInputElement).id;

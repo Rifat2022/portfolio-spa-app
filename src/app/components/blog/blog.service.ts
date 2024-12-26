@@ -16,13 +16,13 @@ export interface BlogDto {
 
 export interface BlogContentDto {
   serial: number; // Required
-  contentToolUniqueId?: string; // Optional
+  UniqueId?: string; // Optional
   content: string; // Required
 }
 
 export interface ContentPhotoDto {
   serial: number; // Required
-  contentPhotoToolUniqueId?: string; // Optional
+  UniqueId?: string; // Optional
   file?: File; // Optional
 }
 
