@@ -4,7 +4,6 @@ export interface    Blog {
     id:any; 
     title:string; 
     authorName:string;
-    heading: string; 
     slug: string; 
     metaTitle: string; 
     metaDescription: string[]; 

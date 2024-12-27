@@ -1,5 +1,5 @@
 <div class="container-fluid p-3">
-  <h2 class="text-center">Create new blog</h2>
+  <h2 class="text-uppercase">Create new blog</h2>
   <div class="row m-3">
     <!-- Blog editor container -->
     <div id="blog-input-container" class="col-10">
@@ -9,7 +9,7 @@
         <div class="text-uppercase" #warning></div>
         <!-- buttons -->
         <div class="" id="formButtons">
-          <button class="btn btn-outline-danger" (click)="ResetBlog($event)">
+          <button class="btn btn-outline-danger" (click)="ResetNewBlog($event)">
             <i class="bi bi-arrow-clockwise"></i>
           </button>
           <button class="btn btn-outline-primary" (click)="CreateBlog($event)">
@@ -31,10 +31,7 @@
           (click)="CreateBlogElementsBySelectedTool(coverPhotoDiv)">
           <i class="bi bi-file-earmark-image "></i> Cover Photo
         </div>
-        <div id="heading" role="button" #headingDiv class="p-3 cursor-pointer shadow-sm"
-          (click)="CreateBlogElementsBySelectedTool(headingDiv)">
-          <i class="bi bi-file-earmark-text me-2"></i> Heading
-        </div>
+        
         <div id="meta-title" role="button" #metaTitleDiv class="p-3 cursor-pointer shadow-sm"
           (click)="CreateBlogElementsBySelectedTool(metaTitleDiv)">
           <i class="fa-brands fa-meta fa-lg me-2"></i>Meta Title
@@ -75,19 +72,22 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let blog of blogs">
+          <tr role="button" 
+          *ngFor="let blog of blogs; let i =  index" >
+            
             <td>{{blog?.id}}</td>
-            <td>{{blog?.title}}</td>
-            <td>{{blog?.authorName}}</td>
-            <td>{{blog?.createdAt}}</td>
             <td>
               <img class="w-50 h-50 circled_img" [src]="blog.coverPhoto?.path"
                 [alt]="(blog.coverPhoto) ? blog.coverPhoto.fileName : blog.title" />
             </td>
+            <td>{{blog?.title}}</td>
+            <td>{{blog?.authorName}}</td>
+            <td>{{blog?.createdAt}}</td>            
             <td>
-              <button class="btn btn-primary btn-sm">Edit</button>
-              <button class="btn btn-danger btn-sm">Delete</button>
-              <button class="btn btn-danger btn-sm">Preview</button>
+              <button data-bs-toggle="tooltip" title="Edit Blog" class="btn btn-primary btn-sm">Edit</button>
+              <button data-bs-toggle="tooltip" title="Preview blog"
+               class="btn btn-danger btn-sm" (click)="PreviewBlog(i)">Preview</button>
+              <button data-bs-toggle="tooltip" title="Delte Blog" class="btn btn-danger btn-sm" (click)="DeleteBlogById(blog?.id)">Delete</button>
             </td>
           </tr>
           <!-- <tr>

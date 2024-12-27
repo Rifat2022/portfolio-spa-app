@@ -5,7 +5,6 @@ import { Blog } from './blog.model';
 export interface BlogDto {
   title: string; // Required
   coverPhoto?: File; // Optional
-  heading: string; // Required
   slug?: string; // Optional
   metaTitle?: string; // Optional
   metaDescription?: string[]; // Optional
@@ -44,7 +43,7 @@ export class BlogService {
   }
 
   // Create a new blog
-  createBlog(blog: FormData): Observable<Blog> {
+  createBlog(blog: FormData ): Observable<Blog> {
     return this.http.post<any>(this.apiUrl, blog);
   }
 

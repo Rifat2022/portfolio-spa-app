@@ -7,6 +7,7 @@ import { TestComponent } from './test/test.component';
 import { CustomerReviewComponent } from './components/customer-review/customer-review.component';
 import { ModifyComponent } from './Modify/parent/modify.component';
 import { OfferedServicesComponent } from './components/offered-services/offered-services.component';
+import { PreviewBlogComponent } from './preview-blog/preview-blog.component';
 
 export const routes: Routes = [
     { path: 'home', component: HomeComponent },
@@ -39,7 +40,8 @@ export const routes: Routes = [
     },
     
     { path: 'portfolio-details', component: PortfolioDetailsComponent },
-    { path: 'blog', component: BlogComponent },
+    { path: 'blog/', component: BlogComponent },
+    { path: 'blog-preview/:slug', component: PreviewBlogComponent },
     { path: 'test', component: TestComponent },
     { path: 'customer-reviews', component: CustomerReviewComponent },
     { path: 'offered-services', component: OfferedServicesComponent },
