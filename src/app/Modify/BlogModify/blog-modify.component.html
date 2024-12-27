@@ -64,24 +64,24 @@
         <thead class="table-dark">
           <tr>
             <th>Id</th>
-            <th>Blog Title</th>
-            <th>Author</th>
-            <th>Created At</th>
             <th>Cover Photo</th>
+            <th>Author</th>
+
+            <th>Blog Title</th>
+            <th>Created At</th>
             <th>Actions</th>
           </tr>
         </thead>
         <tbody>
-          <tr role="button" 
-          *ngFor="let blog of blogs; let i =  index" >
+          <tr *ngFor="let blog of blogs; let i =  index" >
             
             <td>{{blog?.id}}</td>
             <td>
-              <img class="w-50 h-50 circled_img" [src]="blog.coverPhoto?.path"
+              <img id="blog-table-img" [src]="blog.coverPhoto?.path"
                 [alt]="(blog.coverPhoto) ? blog.coverPhoto.fileName : blog.title" />
             </td>
-            <td>{{blog?.title}}</td>
             <td>{{blog?.authorName}}</td>
+            <td>{{blog?.title}}</td>
             <td>{{blog?.createdAt}}</td>            
             <td>
               <button data-bs-toggle="tooltip" title="Edit Blog" class="btn btn-primary btn-sm">Edit</button>
@@ -90,15 +90,6 @@
               <button data-bs-toggle="tooltip" title="Delte Blog" class="btn btn-danger btn-sm" (click)="DeleteBlogById(blog?.id)">Delete</button>
             </td>
           </tr>
-          <!-- <tr>
-            <td>2</td>
-            <td>Jane Smith</td>
-            <td>jane.smith&#64;example.com</td>
-            <td>
-              <button class="btn btn-primary btn-sm">Edit</button>
-              <button class="btn btn-danger btn-sm">Delete</button>
-            </td>
-          </tr> -->
         </tbody>
       </table>
     </div>
