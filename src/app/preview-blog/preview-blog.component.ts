@@ -11,14 +11,15 @@ import { CommonModule } from '@angular/common';
   styleUrl: './preview-blog.component.scss'
 })
 export class PreviewBlogComponent implements OnInit {
-  blog!: Blog; 
-  constructor(private router: Router, private route: ActivatedRoute){
+  blog!: Blog;
+  constructor(private router: Router, private route: ActivatedRoute) {
 
   }
   ngOnInit() {
-    // Retrieve blog data from router state
+    // Retrieve blog data from navigation state or fallback to history.state
     const navigation = this.router.getCurrentNavigation();
-    this.blog = navigation?.extras.state?.['blog'];
+    this.blog = navigation?.extras.state?.['blog'] || history.state['blog'];
+
     if (!this.blog) {
       // If no blog data, navigate back or show an error
       this.router.navigate(['/modify/blog']);

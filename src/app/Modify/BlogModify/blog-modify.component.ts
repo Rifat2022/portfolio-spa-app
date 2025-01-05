@@ -6,7 +6,6 @@ import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import * as _ from 'lodash';
 import { ToastrService } from 'ngx-toastr';
-
 @Component({
   selector: 'app-blog-modify',
   standalone: true,
@@ -18,13 +17,19 @@ export class BlogModifyComponent {
   @Output() public onUploadFinished = new EventEmitter();
   @ViewChild('dynamicContainer', { read: ViewContainerRef }) container!: ViewContainerRef;
   @ViewChild('warning', { read: ViewContainerRef }) warningContainer!: ViewContainerRef;
-  uniqueProperties: string[] = [];
-  assignedProperties: string[] = [];
   isEditMode: boolean = false;
   progress: number = 0;
   message: string = '';
   serial = 0;
   blogs!: Blog[];
+  uniqueProperties: string[] = [];
+  assignedProperties: string[] = [];
+  uniqueIdList: string[] = [];
+  InputTypeId!: {
+    textInput: string[];
+    textareaInput: string[];
+    fileInput: string[];
+  }
   blogTools: any = {
     title: 'title',
     coverPhoto: 'cover-photo',
@@ -35,11 +40,8 @@ export class BlogModifyComponent {
     contentPhotos: 'content-photo',
     blogVideo: 'blog-video',
   }
-  InputTypeId!: {
-    textInput: string[];
-    textareaInput: string[];
-    fileInput: string[];
-  }
+
+
   newBlog!: {
     blogId: number | undefined,
     title?: string;
@@ -51,27 +53,23 @@ export class BlogModifyComponent {
     coverPhoto?: File | null;
     blogVideo?: File | null;
   };
-  uniqueIdList: string[]=[];
   /**
    * Constructor
    */
   constructor(
-    private renderer2: Renderer2, private toastr: ToastrService,
-    private router: Router, private fileService: FileService, private blogService: BlogService
+    private toastr: ToastrService,
+    private router: Router, private fileService: FileService,
+    private blogService: BlogService, private renderer2: Renderer2
   ) {
     var me = this;
     me.InitializeEmptyProperties();
-
   }
-
   ngOnInit(): void {
     var me = this;
     me.GetAllBlogs();
   }
-
-  protected ngAfterViewInit(): void {}
-
-  public InitializeEmptyProperties(){
+  protected ngAfterViewInit(): void { }
+  public InitializeEmptyProperties() {
     var me = this;
     me.newBlog = {
       blogId: undefined,
@@ -92,7 +90,6 @@ export class BlogModifyComponent {
       fileInput: ['cover-photo', 'content-photo', 'blog-video']
     }
   }
-
   GetAllBlogs() {
     var me = this;
     me.blogService.getBlogs().subscribe({
@@ -100,7 +97,7 @@ export class BlogModifyComponent {
         this.blogs = me.MapBlogItem(blogs);
       },
       error: (error) => {
-        this.toastr.error("Failed fetching blogs","", {
+        this.toastr.error("Failed fetching blogs", "", {
           timeOut: 2000,
         })
       },
@@ -108,8 +105,8 @@ export class BlogModifyComponent {
       }
     });
   }
-
-  public MapBlogItem(blogs:Blog[]){
+  
+  public MapBlogItem(blogs: Blog[]) {
     let mappedBlog = blogs.map((value: Blog) => ({
       id: value.id,
       title: value.title,
@@ -131,8 +128,7 @@ export class BlogModifyComponent {
     }));
     return mappedBlog;
   }
-
-  protected CreateBlogElementsBySelectedTool(element: HTMLElement) {
+  public CreateBlogElementsBySelectedTool(element: HTMLElement) {
     var me = this;
     const selectedTool = element?.id;
     if (!me.IsValidBlogElement(selectedTool)) {
@@ -143,42 +139,39 @@ export class BlogModifyComponent {
     // loads into DOM
     me.renderer2.appendChild(me.container.element.nativeElement, newlyCreatedParentDiv);
   }
-
   CreateBlog($event: Event) {
-    let createdFormData = this.CreateFormData();
+    var me = this;
+    let createdFormData = me.CreateFormData();
     if (createdFormData)
-      this.blogService.createBlog(createdFormData).subscribe({
-        next: (blog:any) => {
-          this.toastr.success(`Blog Created`,"Success!", {
+      me.blogService.createBlog(createdFormData).subscribe({
+        next: (blog: any) => {
+          me.toastr.success(`Blog Created`, "Success!", {
             timeOut: 2000,
           })
-          if(!_.isEmpty(blog)){
-            let newBlog = this.MapSingleBlog(blog);
-            this.blogs.push(newBlog);
-            this.ResetNewBlog($event);
-            _.each(this.uniqueIdList, (uId)=> {
-              this.ResetAllInputtype(uId); 
+          if (!_.isEmpty(blog)) {
+            let newBlog = me.MapSingleBlog(blog);
+            me.blogs.push(newBlog);
+            me.ResetNewBlog($event);
+            _.each(me.uniqueIdList, (uId) => {
+              me.ResetAllInputtype(uId);
             })
           }
-          
         },
         error: (error: any) => {
-          this.toastr.error(`${error.message}`,"Failed to create blog", {
+          me.toastr.error(`${error.message}`, "Failed to create blog", {
             timeOut: 2000,
           })
-        }, 
-        complete: ()=> {
-
+        },
+        complete: () => {
         }
       })
-    else{
-      this.toastr.error(``,"Invalid FormData Creation!", {
+    else {
+      me.toastr.error(``, "Invalid FormData Creation!", {
         timeOut: 2000,
       })
     }
   }
-
-  MapSingleBlog(blog:Blog){
+  MapSingleBlog(blog: Blog) {
     let mappedBlog = {
       id: blog.id,
       title: blog.title,
@@ -203,23 +196,17 @@ export class BlogModifyComponent {
     };
     return mappedBlog;
   }
-
-  CreateFormData() : FormData | undefined {
+  CreateFormData(): FormData | undefined {
     const formData = new FormData();
-    // Add primitive fields
-    // formData.append("blogId", this.newBlog.blogId);
     var me = this;
-    if (me.newBlog.title) formData.append("title", me.newBlog.title)
-    else return;
-    if (me.newBlog.slug) formData.append("slug", me.newBlog.slug);
-    else {
-      me.newBlog.slug = me.newBlog.title.replace(/\s+/g, '-');
-    }
+    if (!me.newBlog.title || me.newBlog.blogContents.length == 0)
+      return;
+    formData.append("title", me.newBlog.title)
+    me.newBlog.slug = me.newBlog.title.replace(/\s+/g, '-').toLowerCase();
+    formData.append("slug", me.newBlog.slug);
     if (me.newBlog.metaTitle) formData.append("metaTitle", me.newBlog.metaTitle);
     if (me.newBlog.metaDescription) formData.append(`metaDescription`, me.newBlog.metaDescription)
     if (me.newBlog.blogContents) formData.append(`blogContents`, JSON.stringify(me.newBlog.blogContents));
-    else return;
-    // Add content photos (array of objects)
     this.newBlog.contentPhotos.forEach((cp: any) => {
       if (cp.file) {
         var fileName = `${cp.file.name}%!%` + `${cp.serialNo}%!%` + `${cp.uniqueId}`;
@@ -236,129 +223,6 @@ export class BlogModifyComponent {
     // formData.append("serialIdentifier", JSON.stringify(this.newBlog.serialIdentifier)); 
     return formData;
   }
-
-  IsValidBlogElement(selectedTool: string): boolean {
-    var me = this;
-    if (me.assignedProperties.includes(selectedTool)) {
-      me.CreateWarning(`Multiple ${selectedTool} is not allowed`)
-      return false;
-    }
-    if (me.uniqueProperties.includes(selectedTool)) {
-      me.assignedProperties.push(selectedTool);
-    }
-    return true;
-  }
-
-
-  GetInputType(selectedtool: string): string {
-    if (this.InputTypeId.textInput.includes(selectedtool)) {
-      return 'text';
-    }
-    else if (this.InputTypeId.textareaInput.includes(selectedtool)) {
-      return 'textarea';
-    }
-    else if (this.InputTypeId.fileInput.includes(selectedtool)) {
-      return 'file';
-    }
-    else {
-      return '';
-    }
-  }
-
-
-  CreateElements(type: string, toolsItem: string) {
-    var me = this;
-    const newParentDiv = me.renderer2.createElement('div');
-    const label = me.renderer2.createElement('label');
-    const createdType = (type === 'textarea') ? me.renderer2.createElement('textarea') : me.renderer2.createElement('input');
-    let newLabel = me.ConfigureLabelStyle(label, toolsItem);
-    let newInputElement = me.ConfigureInputStyle(createdType, toolsItem);
-    // me.ConfigureModel(toolsItem)
-    me.ConfigureInputType(type, createdType, toolsItem);
-    me.BindInputElementWithValue(createdType, type, toolsItem); //bind Event
-    me.renderer2.addClass(newParentDiv, "mb-3");
-    let newElementDiv = me.AddLabelAndInputElementInNewDiv(newParentDiv, newLabel, newInputElement);
-    return newElementDiv;
-  }
-
-
-  ConfigureLabelStyle(label: string, selectedTool: string) {
-    // Configure label
-    this.renderer2.setAttribute(label, 'for', selectedTool);
-    this.renderer2.appendChild(label, this.renderer2.createText(selectedTool.toUpperCase()));
-    this.renderer2.addClass(label, "mb-2") // add bootstrap class to label
-    this.renderer2.addClass(label, "fw-bold") // add bootstrap class to label
-    return label;
-  }
-
-  ConfigureInputStyle(inputElement: string, selectedTool: string) {
-    // Configure input
-    var me = this;
-    const uniqueId = `${selectedTool}-${Date.now()}`; 
-    this.uniqueIdList.push(uniqueId); 
-    me.renderer2.setAttribute(inputElement, 'id', uniqueId);
-    me.renderer2.setAttribute(inputElement, 'name', selectedTool);
-    if (selectedTool === me.blogTools.title) {
-      me.renderer2.setAttribute(inputElement, 'placeholder', `e.g. Why Everyone Should Learn Programming`);
-    }
-    if (selectedTool === me.blogTools.metaTitle) {
-      me.renderer2.setAttribute(inputElement, 'placeholder', `e.g. Benefits of Learning Programming - Unlock Your Potential`);
-    }
-    if (selectedTool === me.blogTools.metaDescription) {
-      me.renderer2.setAttribute(inputElement, 'placeholder', `e.g. programming can boost your career, enhance problem-solving skills`);
-    }
-    me.renderer2.addClass(inputElement, 'form-control');
-    if (selectedTool === me.blogTools.coverPhoto || selectedTool === me.blogTools.contentPhoto || selectedTool === me.blogTools.contentVideo) {
-      me.renderer2.addClass(inputElement, 'w-50');
-    }
-    return inputElement
-  }
-
-  ConfigureInputType(type: string, inputElement: any, selectedTool: string) {
-    var me = this;
-    if (type === 'textarea') {
-      me.renderer2.setAttribute(inputElement, 'rows', '10');
-    }
-    else if (type === 'file') {
-      me.renderer2.setAttribute(inputElement, 'type', 'file');
-      me.renderer2.setAttribute(inputElement, 'accept', (selectedTool == 'cover-photo') || (selectedTool == 'content-photo') ? 'image/*' : 'video/*');
-    }
-    else if (type === "text") {
-      me.renderer2.setAttribute(inputElement, 'type', type);
-    }
-  }
-
-  AddLabelAndInputElementInNewDiv(parentDiv: any, labelElement: any, inputElement: any) {
-    this.renderer2.appendChild(parentDiv, labelElement);
-    this.renderer2.appendChild(parentDiv, inputElement)
-    return parentDiv;
-  }
-
-  BindInputElementWithValue(inputElement: HTMLInputElement, type: string, toolsItem: string) {
-    if (type === 'file') {
-      this.renderer2.listen(inputElement, "change", (event: Event) => {
-        let id = (event.target as HTMLInputElement).id;
-        const files = (event.target as HTMLInputElement).files;
-        if (files && files.length > 0) {
-          this.UpdateContentsPhotoValue(toolsItem, files, id);
-        }
-      })
-    }
-    else {
-      // text & textarea type has title,  meta title, meta description , blog content
-      this.renderer2.listen(inputElement, "blur", (event: Event) => {
-        let id = (event.target as HTMLInputElement).id;
-        let updatedValue = (event?.target as HTMLInputElement)?.value;
-        this.UpdateBlogContentsTextValue(toolsItem, updatedValue, id)
-      })
-    }
-  }
-
-  ResetAllInputtype(uniqueId: string) {
-    const fileInput = this.container.element.nativeElement.querySelector(`#${uniqueId}`) as HTMLInputElement;
-    if (fileInput) fileInput.value = '';
-  }
-
   UpdateContentsPhotoValue(toolsItem: string, files: any, id: string) {
     if (toolsItem === this.blogTools.coverPhoto) {
       this.newBlog.coverPhoto = files[0]; //single file
@@ -413,6 +277,112 @@ export class BlogModifyComponent {
       }
     }
   }
+
+
+  ResetAllInputtype(uniqueId: string) {
+    const fileInput = this.container.element.nativeElement.querySelector(`#${uniqueId}`) as HTMLInputElement;
+    if (fileInput) fileInput.value = '';
+  }
+
+
+  ResetNewBlog($event: any) {
+    var me = this;
+    me.newBlog = {
+      blogId: undefined,
+      title: '',
+      coverPhoto: null,
+      metaTitle: '',
+      metaDescription: '',
+      blogContents: [],
+      contentPhotos: [],
+      blogVideo: null,
+    };
+  }
+
+  DeleteBlogById(blogId: number) {
+    if (_.isEmpty(blogId)) {
+      this.blogService.deleteBlog(blogId).subscribe({
+        next: (data: any) => {
+          this.toastr.success(`${data?.message}`, "Success!", {
+            timeOut: 2000,
+          })
+          _.remove(this.blogs, (blog) => {
+            return blogId == blog.id
+          })
+        },
+        error: (error: any) => {
+        },
+        complete: () => {
+        }
+      })
+    } else {
+      this.toastr.error(``, "Invalid Id!", {
+        timeOut: 2000,
+      })
+    }
+  }
+  PreviewBlog(index: number) {
+    const blog = this.blogs[index];
+    if (blog.slug)
+      this.router.navigate([`blog-preview/${blog.slug}`], { state: { blog: blog } });
+    else {
+      this.toastr.error(``, "Empty Slug!", {
+        timeOut: 2000,
+      })
+    }
+  }
+  GetInputType(selectedtool: string): string {
+    if (this.InputTypeId.textInput.includes(selectedtool)) {
+      return 'text';
+    }
+    else if (this.InputTypeId.textareaInput.includes(selectedtool)) {
+      return 'textarea';
+    }
+    else if (this.InputTypeId.fileInput.includes(selectedtool)) {
+      return 'file';
+    }
+    else {
+      return '';
+    }
+  }
+  CreateElements(type: string, toolsItem: string) {
+    var me = this;
+    const newParentDiv = me.renderer2.createElement('div');
+    const label = me.renderer2.createElement('label');
+    const createdType = (type === 'textarea') ? me.renderer2.createElement('textarea') : me.renderer2.createElement('input');
+    let newLabel = me.ConfigureLabelStyle(label, toolsItem);
+    let newInputElement = me.ConfigureInputStyle(createdType, toolsItem);
+    // me.ConfigureModel(toolsItem)
+    me.ConfigureInputType(type, createdType, toolsItem);
+    me.BindInputElementWithValue(createdType, type, toolsItem); //bind Event
+    me.renderer2.addClass(newParentDiv, "mb-3");
+    let newElementDiv = me.AddLabelAndInputElementInNewDiv(newParentDiv, newLabel, newInputElement);
+    return newElementDiv;
+  }
+  BindInputElementWithValue(inputElement: HTMLInputElement, type: string, toolsItem: string) {
+    if (type === 'file') {
+      this.renderer2.listen(inputElement, "change", (event: Event) => {
+        let id = (event.target as HTMLInputElement).id;
+        const files = (event.target as HTMLInputElement).files;
+        if (files && files.length > 0) {
+          this.UpdateContentsPhotoValue(toolsItem, files, id);
+        }
+      })
+    }
+    else {
+      // text & textarea type has title,  meta title, meta description , blog content
+      this.renderer2.listen(inputElement, "blur", (event: Event) => {
+        let id = (event.target as HTMLInputElement).id;
+        let updatedValue = (event?.target as HTMLInputElement)?.value;
+        this.UpdateBlogContentsTextValue(toolsItem, updatedValue, id)
+      })
+    }
+  }
+  AddLabelAndInputElementInNewDiv(parentDiv: any, labelElement: any, inputElement: any) {
+    this.renderer2.appendChild(parentDiv, labelElement);
+    this.renderer2.appendChild(parentDiv, inputElement)
+    return parentDiv;
+  }
   CreateWarning(msg: string) {
     var me = this;
     // Create a paragraph element
@@ -436,55 +406,58 @@ export class BlogModifyComponent {
       }, 3000);
     }
   }
-  ResetNewBlog($event: any) {
+  IsValidBlogElement(selectedTool: string): boolean {
     var me = this;
-    me.newBlog = {
-      blogId: undefined,
-      title: '',
-      coverPhoto: null,
-      metaTitle: '',
-      metaDescription: '',
-      blogContents: [],
-      contentPhotos: [],
-      blogVideo: null,
-    };
+    if (me.assignedProperties.includes(selectedTool)) {
+      me.CreateWarning(`Multiple ${selectedTool} is not allowed`)
+      return false;
+    }
+    if (me.uniqueProperties.includes(selectedTool)) {
+      me.assignedProperties.push(selectedTool);
+    }
+    return true;
   }
-
-  DeleteBlogById(blogId: number) {
-    if (_.isEmpty(blogId)) {
-      this.blogService.deleteBlog(blogId).subscribe({
-        next:(data: any)=> {
-          this.toastr.success(`${data?.message}`,"Success!", {
-            timeOut: 2000,
-          })
-          _.remove(this.blogs, (blog)=> {
-            return blogId==blog.id
-          })
-        }, 
-        error: (error: any)=> {
-
-        }, 
-        complete: ()=> {
-
-        }
-      })
-    } else {
-      this.toastr.error(``,"Invalid Id!", {
-        timeOut: 2000,
-      })
+  ConfigureInputStyle(inputElement: string, selectedTool: string) {
+    // Configure input
+    var me = this;
+    const uniqueId = `${selectedTool}-${Date.now()}`;
+    this.uniqueIdList.push(uniqueId);
+    me.renderer2.setAttribute(inputElement, 'id', uniqueId);
+    me.renderer2.setAttribute(inputElement, 'name', selectedTool);
+    if (selectedTool === me.blogTools.title) {
+      me.renderer2.setAttribute(inputElement, 'placeholder', `e.g. Why Everyone Should Learn Programming`);
+    }
+    if (selectedTool === me.blogTools.metaTitle) {
+      me.renderer2.setAttribute(inputElement, 'placeholder', `e.g. Benefits of Learning Programming - Unlock Your Potential`);
+    }
+    if (selectedTool === me.blogTools.metaDescription) {
+      me.renderer2.setAttribute(inputElement, 'placeholder', `e.g. programming can boost your career, enhance problem-solving skills`);
+    }
+    me.renderer2.addClass(inputElement, 'form-control');
+    if (selectedTool === me.blogTools.coverPhoto || selectedTool === me.blogTools.contentPhoto || selectedTool === me.blogTools.contentVideo) {
+      me.renderer2.addClass(inputElement, 'w-50');
+    }
+    return inputElement
+  }
+  ConfigureInputType(type: string, inputElement: any, selectedTool: string) {
+    var me = this;
+    if (type === 'textarea') {
+      me.renderer2.setAttribute(inputElement, 'rows', '10');
+    }
+    else if (type === 'file') {
+      me.renderer2.setAttribute(inputElement, 'type', 'file');
+      me.renderer2.setAttribute(inputElement, 'accept', (selectedTool == 'cover-photo') || (selectedTool == 'content-photo') ? 'image/*' : 'video/*');
+    }
+    else if (type === "text") {
+      me.renderer2.setAttribute(inputElement, 'type', type);
     }
   }
-
-  PreviewBlog(index: number) {
-    const blog = this.blogs[index];
-    if (blog.slug)
-      this.router.navigate(['/blog-preview', blog.slug], { state: { blog } });
-    else{
-      this.toastr.error(``,"Empty Slug!", {
-        timeOut: 2000,
-      })
-    }
-      
+  ConfigureLabelStyle(label: string, selectedTool: string) {
+    // Configure label
+    this.renderer2.setAttribute(label, 'for', selectedTool);
+    this.renderer2.appendChild(label, this.renderer2.createText(selectedTool.toUpperCase()));
+    this.renderer2.addClass(label, "mb-2") // add bootstrap class to label
+    this.renderer2.addClass(label, "fw-bold") // add bootstrap class to label
+    return label;
   }
-
 }
